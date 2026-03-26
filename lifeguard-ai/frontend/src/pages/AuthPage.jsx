@@ -3,6 +3,7 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   updateProfile,
+  signInWithPopup,
   signInWithRedirect,
   getRedirectResult,
 } from 'firebase/auth'
@@ -33,6 +34,19 @@ async function ensureFirestoreUser(user) {
   }
 }
 
+function mapAuthError(err) {
+  const code = err?.code || ''
+  const MAP = {
+    'auth/popup-closed-by-user': 'Google sign-in popup was closed before completion.',
+    'auth/popup-blocked': 'Popup was blocked by browser. Please allow popups and try again.',
+    'auth/cancelled-popup-request': 'Google sign-in was cancelled. Please try again.',
+    'auth/operation-not-allowed': 'Google sign-in is not enabled in Firebase Authentication settings.',
+    'auth/unauthorized-domain': 'This domain is not authorized for Firebase auth. Add your Vercel domain in Firebase Auth > Settings > Authorized domains.',
+    'auth/network-request-failed': 'Network error during sign-in. Check connection and retry.',
+  }
+  return MAP[code] || err?.message || 'Authentication failed. Please try again.'
+}
+
 export default function AuthPage({ onBack }) {
   const [mode, setMode] = useState('login')
   const [form, setForm] = useState({ name: '', email: '', password: '' })
@@ -52,8 +66,8 @@ export default function AuthPage({ onBack }) {
         }
       })
       .catch((err) => {
-        if (err.code !== 'auth/no-current-user') {
-          setError(err.message)
+        if (err.code !== 'auth/no-current-user' && err.code !== 'auth/null-user') {
+          setError(mapAuthError(err))
         }
       })
       .finally(() => setGoogleLoading(false))
@@ -61,7 +75,33 @@ export default function AuthPage({ onBack }) {
 
   const handleGoogle = async () => {
     setError('')
-    await signInWithRedirect(auth, googleProvider)
+    setGoogleLoading(true)
+    try {
+      const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
+      if (!isMobile) {
+        const result = await signInWithPopup(auth, googleProvider)
+        if (result?.user) await ensureFirestoreUser(result.user)
+        return
+      }
+      await signInWithRedirect(auth, googleProvider)
+    } catch (err) {
+      const shouldFallbackToRedirect =
+        err?.code === 'auth/popup-blocked' ||
+        err?.code === 'auth/cancelled-popup-request'
+
+      if (shouldFallbackToRedirect) {
+        try {
+          await signInWithRedirect(auth, googleProvider)
+          return
+        } catch (redirectErr) {
+          setError(mapAuthError(redirectErr))
+        }
+      } else {
+        setError(mapAuthError(err))
+      }
+    } finally {
+      setGoogleLoading(false)
+    }
   }
 
   const handleSubmit = async (e) => {

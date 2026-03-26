@@ -10,6 +10,7 @@ import PreventionPlan from '../components/PreventionPlan'
 import ExerciseVideos from '../components/ExerciseVideos'
 import DietPlan from '../components/DietPlan'
 import MentalHealthChat from '../components/MentalHealthChat'
+import ProductivityPlanner from '../components/ProductivityPlanner'
 
 const NAV = [
   { id: 'assessment', label: 'Assessment',    num: '01', desc: 'Diagnostic AI' },
@@ -17,6 +18,7 @@ const NAV = [
   { id: 'exercise',   label: 'Exercise',       num: '03', desc: 'Video protocols' },
   { id: 'diet',       label: 'Diet Plan',      num: '04', desc: 'Nutrition guide' },
   { id: 'mental',     label: 'Mental Health',  num: '05', desc: 'Support chat' },
+  { id: 'planner',    label: 'Productivity',   num: '06', desc: 'AI time blocks' },
 ]
 
 // ─── Risk colour helper ────────────────────────────────────────────────────
@@ -179,6 +181,7 @@ export default function MainApp({ user }) {
     exercise:   ['MOVEMENT PROTOCOL', 'Exercise Videos'],
     diet:       ['NUTRITIONAL GUIDE', 'Diet Plan'],
     mental:     ['COGNITIVE SUPPORT', 'Mental Health'],
+    planner:    ['FOCUS ENGINE',      'Productivity Planner'],
   }
   const [subtitle, title] = PANEL[activeNav] || ['', '']
   const showForm  = activeNav === 'assessment' && !hasAssessment
@@ -395,6 +398,14 @@ export default function MainApp({ user }) {
               )}
               {activeNav === 'exercise' && <ExerciseVideos riskScores={riskScores} userProfile={userProfile} />}
               {activeNav === 'diet'     && <DietPlan riskScores={riskScores} userProfile={userProfile} />}
+              {activeNav === 'planner'  && (
+                <ProductivityPlanner
+                  user={user}
+                  userProfile={userProfile}
+                  riskScores={riskScores}
+                  onNavigateSection={setActiveNav}
+                />
+              )}
             </div>
           </div>
         )}

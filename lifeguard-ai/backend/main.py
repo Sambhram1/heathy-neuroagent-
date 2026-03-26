@@ -3,12 +3,14 @@ import os
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, Response
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 import uvicorn
 from typing import Optional, List
 from pydantic import BaseModel
+import httpx
+from productivity_ai.scheduler import ProductivityPlannerEngine
 
 from models.schemas import ChatRequest, ChatResponse, RiskScores, MentalChatRequest, MentalChatResponse, AssessRequest, AssessResponse
 from agents.orchestrator import run_agent
@@ -17,6 +19,7 @@ from rag.knowledge_base import initialize_kb, get_document_count
 
 # ── IndianPlate AI ────────────────────────────────────────────────────────────
 _diet_engine = None
+_planner_engine = None
 
 def get_diet_engine():
     global _diet_engine
@@ -24,6 +27,15 @@ def get_diet_engine():
         from indian_plate_ai.diet_engine import DietEngine
         _diet_engine = DietEngine()
     return _diet_engine
+
+
+def get_planner_engine():
+    global _planner_engine
+    if _planner_engine is None:
+        engine = ProductivityPlannerEngine()
+        engine.load_or_train()
+        _planner_engine = engine
+    return _planner_engine
 
 
 class DietRiskScores(BaseModel):
@@ -48,6 +60,44 @@ class DietUserProfile(BaseModel):
 class DietPlanRequest(BaseModel):
     risk_scores: DietRiskScores
     user_profile: DietUserProfile
+
+
+class FishTTSRequest(BaseModel):
+    text: str
+    voice_id: Optional[str] = None
+    format: str = "mp3"
+
+
+class PlannerTask(BaseModel):
+    task: str
+    duration_minutes: Optional[int] = None
+    priority: Optional[float] = 0.5
+    intensity: Optional[str] = None
+
+
+class PlannerEnergyPoint(BaseModel):
+    start_time: str
+    end_time: str
+    level: Optional[float | str] = 0.5
+
+
+class PlannerAvailabilityBlock(BaseModel):
+    start_time: str
+    end_time: str
+
+
+class ProductivityPlanRequest(BaseModel):
+    tasks: List[PlannerTask]
+    energy_levels: List[PlannerEnergyPoint]
+    calendar_availability: List[PlannerAvailabilityBlock]
+    horizon: Optional[str] = "day"
+
+
+class ProductivityPlanItem(BaseModel):
+    task: str
+    start_time: str
+    end_time: str
+    energy_level_used: str
 
 # In-memory session store: session_id -> {messages: [], risk_scores, amplifiers, evidence, plan_ready, plan}
 sessions: dict = {}
@@ -260,6 +310,96 @@ async def mental_chat(request: MentalChatRequest):
         message=result["message"],
         crisis_detected=result.get("crisis_detected", False),
     )
+
+
+@app.post("/api/voice/fish-tts")
+async def fish_tts(request: FishTTSRequest):
+    fish_api_key = os.getenv("FISH_API_KEY", "").strip()
+    fish_default_voice = os.getenv("FISH_REFERENCE_ID", "").strip()
+    fish_model = os.getenv("FISH_MODEL", "s2-pro").strip() or "s2-pro"
+
+    if not fish_api_key:
+        raise HTTPException(
+            status_code=503,
+            detail="Fish voice service is not configured. Set FISH_API_KEY on backend.",
+        )
+
+    text = (request.text or "").strip()
+    if not text:
+        raise HTTPException(status_code=400, detail="text is required")
+
+    payload = {
+        "text": text[:1200],
+        "format": request.format or "mp3",
+    }
+    voice_id = (request.voice_id or fish_default_voice or "").strip()
+    if voice_id:
+        payload["reference_id"] = voice_id
+
+    headers = {
+        "Authorization": f"Bearer {fish_api_key}",
+        "Content-Type": "application/json",
+        "model": fish_model,
+    }
+
+    try:
+        async with httpx.AsyncClient(timeout=45.0) as client:
+            res = await client.post("https://api.fish.audio/v1/tts", json=payload, headers=headers)
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=f"Fish request failed: {str(e)}")
+
+    if res.status_code >= 400:
+        detail = res.text[:300] if res.text else "Fish API error"
+        raise HTTPException(status_code=res.status_code, detail=f"Fish API error ({res.status_code}): {detail}")
+
+    return Response(content=res.content, media_type=res.headers.get("content-type", "audio/mpeg"))
+
+
+@app.post("/api/productivity-plan")
+async def productivity_plan(request: ProductivityPlanRequest):
+    try:
+        engine = get_planner_engine()
+        result = engine.generate_schedule(
+            tasks=[t.model_dump() for t in request.tasks],
+            energy_levels=[e.model_dump() for e in request.energy_levels],
+            availability=[a.model_dump() for a in request.calendar_availability],
+            horizon=(request.horizon or "day").lower(),
+        )
+
+        schedule = [ProductivityPlanItem(**row).model_dump() for row in result.get("schedule", [])]
+        return {
+            "schedule": schedule,
+            "meta": result.get("meta", {}),
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Planner generation failed: {str(e)}")
+
+
+@app.post("/api/productivity-train")
+async def productivity_train():
+    try:
+        global _planner_engine
+        _planner_engine = ProductivityPlannerEngine()
+        stats = _planner_engine.train_model()
+        return {
+            "status": "ok",
+            "training": stats,
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Planner training failed: {str(e)}")
+
+
+@app.get("/api/productivity-health")
+async def productivity_health():
+    try:
+        engine = get_planner_engine()
+        return {
+            "status": "ok",
+            "ml_ready": bool(engine.model is not None),
+            "objective": "minimize_context_switching",
+        }
+    except Exception as e:
+        return {"status": "error", "detail": str(e)}
 
 
 @app.post("/api/reset")

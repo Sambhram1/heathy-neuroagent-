@@ -59,12 +59,146 @@ export default function MentalHealthChat({ sessionId, userProfile, reportContext
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const [crisis, setCrisis] = useState(false)
+  const [voiceLive, setVoiceLive] = useState(false)
+  const [voiceLoading, setVoiceLoading] = useState(false)
+  const [listening, setListening] = useState(false)
+  const [voiceError, setVoiceError] = useState('')
   const bottomRef = useRef(null)
   const inputRef = useRef(null)
+  const audioRef = useRef(null)
+  const recognitionRef = useRef(null)
+  const speechRetryRef = useRef(false)
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, loading])
+
+  useEffect(() => {
+    return () => {
+      if (recognitionRef.current) {
+        try { recognitionRef.current.stop() } catch {}
+      }
+      if (audioRef.current) {
+        try {
+          audioRef.current.pause()
+          audioRef.current.src = ''
+        } catch {}
+      }
+    }
+  }, [])
+
+  const speakWithFish = useCallback(async (text) => {
+    if (!voiceLive || !text?.trim()) return
+    setVoiceError('')
+    setVoiceLoading(true)
+    try {
+      const res = await fetch(apiUrl('/api/voice/fish-tts'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text, format: 'mp3' }),
+      })
+      if (!res.ok) {
+        if (res.status === 502 || res.status === 402) {
+          throw new Error('Fish Audio API out of credits (402) or unavailable.');
+        }
+        let detail = ''
+        try {
+          const data = await res.json()
+          detail = data?.detail || ''
+        } catch {}
+        throw new Error(detail || `HTTP ${res.status}`)
+      }
+
+      const blob = await res.blob()
+      const url = URL.createObjectURL(blob)
+
+      if (!audioRef.current) audioRef.current = new Audio()
+      audioRef.current.pause()
+      audioRef.current.src = url
+      await audioRef.current.play()
+      audioRef.current.onended = () => URL.revokeObjectURL(url)
+    } catch (e) {
+      console.warn('Fish Audio failed, falling back to browser TTS:', e.message)
+      setVoiceError(`Using offline voice. (Fish API error: ${e.message})`)
+      
+      // Fallback to browser's native SpeechSynthesis
+      if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(text.substring(0, 200)) // text limits
+        window.speechSynthesis.speak(utterance)
+      } else {
+        setVoiceError(`Voice unavailable: ${e.message}`)
+      }
+    } finally {
+      setVoiceLoading(false)
+    }
+  }, [voiceLive])
+
+  const startListening = useCallback((langOverride) => {
+    setVoiceError('')
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+    if (!SpeechRecognition) {
+      setVoiceError('Speech recognition not supported in this browser.')
+      return
+    }
+
+    if (!window.isSecureContext) {
+      setVoiceError('Microphone requires HTTPS secure context.')
+      return
+    }
+
+    if (!navigator.mediaDevices?.getUserMedia) {
+      setVoiceError('Microphone API not available in this browser.')
+      return
+    }
+
+    const rec = new SpeechRecognition()
+    rec.lang = langOverride || navigator.language || 'en-US'
+    rec.interimResults = false
+    rec.maxAlternatives = 1
+    rec.onstart = () => setListening(true)
+    rec.onend = () => {
+      setListening(false)
+      speechRetryRef.current = false
+    }
+    rec.onerror = (event) => {
+      const reason = event?.error || 'unknown'
+      const msgMap = {
+        'not-allowed': 'Mic permission denied. Allow microphone access and retry.',
+        'service-not-allowed': 'Mic service is blocked by browser settings.',
+        'audio-capture': 'No microphone detected. Connect a mic and retry.',
+        'no-speech': 'No speech detected. Speak clearly and try again.',
+        'network': 'Browser speech service is unavailable right now. Retrying once...',
+        'aborted': 'Voice capture was interrupted. Please retry.',
+      }
+      setListening(false)
+      if (reason === 'network' && !speechRetryRef.current) {
+        speechRetryRef.current = true
+        setVoiceError(msgMap[reason])
+        setTimeout(() => startListening('en-US'), 350)
+        return
+      }
+      setVoiceError(
+        reason === 'network'
+          ? 'Speech recognition is currently unavailable in this browser session. Try Chrome, disable strict privacy extensions, or continue by typing.'
+          : (msgMap[reason] || `Could not capture voice (${reason}). Please try again.`)
+      )
+    }
+    rec.onresult = (event) => {
+      const transcript = event.results?.[0]?.[0]?.transcript?.trim() || ''
+      if (transcript) setInput((prev) => (prev ? `${prev} ${transcript}` : transcript))
+    }
+    recognitionRef.current = rec
+
+    navigator.mediaDevices.getUserMedia({ audio: true })
+      .then((stream) => {
+        stream.getTracks().forEach((t) => t.stop())
+        rec.start()
+      })
+      .catch((err) => {
+        const denied = err?.name === 'NotAllowedError' || err?.name === 'SecurityError'
+        setVoiceError(denied ? 'Mic permission denied. Allow microphone access and retry.' : `Microphone unavailable: ${err?.name || 'unknown error'}`)
+      })
+  }, [])
 
   const send = useCallback(async () => {
     const text = input.trim()
@@ -95,6 +229,9 @@ export default function MentalHealthChat({ sessionId, userProfile, reportContext
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
       const data = await res.json()
       setMessages((prev) => [...prev, { role: 'assistant', content: data.message }])
+      if (voiceLive) {
+        await speakWithFish(data.message)
+      }
       if (data.crisis_detected) setCrisis(true)
     } catch (err) {
       const detail = err?.message ? ` (${err.message})` : ''
@@ -106,7 +243,7 @@ export default function MentalHealthChat({ sessionId, userProfile, reportContext
       setLoading(false)
       setTimeout(() => inputRef.current?.focus(), 100)
     }
-  }, [input, loading, messages, sessionId])
+  }, [input, loading, messages, sessionId, userProfile, reportContext, voiceLive, speakWithFish])
 
   const onKey = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -117,6 +254,39 @@ export default function MentalHealthChat({ sessionId, userProfile, reportContext
 
   return (
     <div className="flex flex-col h-full">
+      {/* Voice therapist controls */}
+      <div className="flex-shrink-0 px-4 pt-3">
+        <div className="glass-card p-3 border border-[rgba(255,255,255,0.08)] flex items-center gap-2 justify-between">
+          <div>
+            <p className="text-[10px] font-mono uppercase tracking-widest text-[#9E9E9E]">Fish Voice Therapist</p>
+            <p className="text-[11px] text-text-muted">Live voice in this side section</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={startListening}
+              className="text-[11px] px-2.5 py-1 rounded border border-[rgba(158,158,158,0.25)] text-[#9E9E9E] hover:bg-[rgba(158,158,158,0.12)]"
+              title="Speak with microphone"
+            >
+              {listening ? 'Listening...' : 'Mic'}
+            </button>
+            <button
+              type="button"
+              onClick={() => setVoiceLive((v) => !v)}
+              className={`text-[11px] px-2.5 py-1 rounded border font-mono uppercase tracking-widest ${voiceLive ? 'border-[#22c55e]/50 text-[#22c55e] bg-[#22c55e]/10' : 'border-[rgba(255,255,255,0.15)] text-text-muted'}`}
+            >
+              {voiceLive ? 'Live On' : 'Live Off'}
+            </button>
+          </div>
+        </div>
+        {(voiceLoading || voiceError) && (
+          <div className="mt-2 text-[11px] font-mono">
+            {voiceLoading && <p className="text-[#9E9E9E]">Generating Fish voice...</p>}
+            {voiceError && <p className="text-accent-500">{voiceError}</p>}
+          </div>
+        )}
+      </div>
+
       {/* Crisis banner */}
       {crisis && (
         <div className="flex-shrink-0 mx-4 mt-4 p-4 rounded-xl border border-accent-500/30 bg-[rgba(229,229,229,0.04)] animate-fade-in">
