@@ -158,6 +158,20 @@ function formatFullDate(date) {
   return date.toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
 }
 
+function startOfDay(dateObj) {
+  const d = new Date(dateObj)
+  d.setHours(0, 0, 0, 0)
+  return d
+}
+
+function isFutureDate(dateObj, todayStart) {
+  return startOfDay(dateObj).getTime() > todayStart.getTime()
+}
+
+function isPastDate(dateObj, todayStart) {
+  return startOfDay(dateObj).getTime() < todayStart.getTime()
+}
+
 function getTaskCategory(category) {
   return String(category || '').toLowerCase()
 }
@@ -462,24 +476,43 @@ export default function ProductivityPlanner({ user, userProfile, riskScores }) {
     }
   }, [completionMap, tasksByDate, weekKeys])
 
-  const streakStats = useMemo(() => {
-    const dates = Object.keys(tasksByDate).sort()
-    let current = 0
-    let best = 0
+  const today = new Date()
+  const todayStart = useMemo(() => startOfDay(today), [today])
 
-    for (const key of dates) {
+  const streakStats = useMemo(() => {
+    const arrivedKeys = Object.keys(tasksByDate)
+      .filter((key) => {
+        const d = new Date(`${key}T00:00:00`)
+        return d.getTime() <= todayStart.getTime()
+      })
+      .sort()
+
+    let rolling = 0
+    let best = 0
+    for (const key of arrivedKeys) {
       const tasks = tasksByDate[key] || []
       const allDone = tasks.length > 0 && tasks.every((t) => completionMap[t.id])
       if (allDone) {
-        current += 1
-        if (current > best) best = current
+        rolling += 1
+        if (rolling > best) best = rolling
       } else {
-        current = 0
+        rolling = 0
       }
     }
 
+    let current = 0
+    const cursorDay = new Date(todayStart)
+    while (true) {
+      const key = localDateKey(cursorDay)
+      const tasks = tasksByDate[key] || []
+      const allDone = tasks.length > 0 && tasks.every((t) => completionMap[t.id])
+      if (!allDone) break
+      current += 1
+      cursorDay.setDate(cursorDay.getDate() - 1)
+    }
+
     return { current, best }
-  }, [completionMap, tasksByDate])
+  }, [completionMap, tasksByDate, todayStart])
 
   const mostProductiveDay = useMemo(() => {
     let bestKey = ''
@@ -511,9 +544,8 @@ export default function ProductivityPlanner({ user, userProfile, riskScores }) {
     return sum
   }, [completionMap, tasksByDate])
 
-  const today = new Date()
-
-  const toggleComplete = (taskId) => {
+  const toggleComplete = (taskId, dateObj) => {
+    if (isFutureDate(dateObj, todayStart)) return
     setCompletionMap((prev) => ({ ...prev, [taskId]: !prev[taskId] }))
   }
 
@@ -567,9 +599,20 @@ export default function ProductivityPlanner({ user, userProfile, riskScores }) {
               const key = localDateKey(dateObj)
               const tasks = tasksByDate[key] || []
               const done = tasks.filter((t) => completionMap[t.id]).length
+              const progressPct = tasks.length ? Math.round((done / tasks.length) * 100) : 0
               const isToday = key === localDateKey(today)
               const isSelected = key === selectedDateKey
+              const past = isPastDate(dateObj, todayStart)
+              const future = isFutureDate(dateObj, todayStart)
               const tooltip = tasks.map((t) => `${CATEGORY_META[t.category].icon} ${t.title}`).join(' | ')
+              const isMissed = past && tasks.length > 0 && done === 0
+
+              let completionTint = ''
+              if (past && tasks.length > 0) {
+                if (progressPct === 0) completionTint = 'bg-[#ef4444]/10'
+                else if (progressPct < 100) completionTint = 'bg-[#facc15]/10'
+                else completionTint = 'bg-[#22c55e]/10'
+              }
 
               return (
                 <button
@@ -577,15 +620,16 @@ export default function ProductivityPlanner({ user, userProfile, riskScores }) {
                   type="button"
                   title={tooltip}
                   onClick={() => setSelectedDateKey(key)}
-                  className={`min-h-[110px] border-b border-r border-white/5 p-2 text-left transition-colors hover:bg-white/[0.04] ${isSelected ? 'bg-white/[0.05]' : ''} ${isToday ? 'ring-2 ring-inset ring-[#22c55e]' : ''}`}
+                  className={`min-h-[110px] border-b border-r border-white/5 p-2 text-left transition-colors hover:bg-white/[0.04] ${completionTint} ${isSelected ? 'bg-white/[0.05]' : ''} ${isToday ? 'ring-2 ring-inset ring-[#22c55e]' : ''}`}
                 >
                   <div className="mb-2 flex items-center justify-between">
                     <span className={`inline-flex h-7 w-7 items-center justify-center rounded-full text-[11px] font-mono ${isToday ? 'bg-[#22c55e] text-black font-bold shadow-[0_0_12px_rgba(34,197,94,0.55)]' : 'text-white/70'}`}>
                       {dateObj.getDate()}
                     </span>
-                    <span className="text-[9px] font-mono uppercase tracking-wide text-white/40">{tasks.length} tasks</span>
+                    <span className="text-[9px] font-mono uppercase tracking-wide text-white/40">{future ? `${tasks.length} planned` : `${tasks.length} tasks`}</span>
                   </div>
                   <p className="text-[9px] font-mono text-white/55">{done}/{tasks.length} completed</p>
+                  {isMissed && <p className="mt-0.5 text-[9px] font-mono text-[#fca5a5]">⚠️ Missed</p>}
                 </button>
               )
             })}
@@ -622,7 +666,7 @@ export default function ProductivityPlanner({ user, userProfile, riskScores }) {
 
             <div className="mb-3">
               <div className="mb-1 flex items-center justify-between text-[10px] font-mono text-white/65">
-                <span>{selectedDoneCount}/{selectedTasks.length} tasks completed today</span>
+                <span>{selectedDoneCount}/{selectedTasks.length} tasks completed</span>
                 <span>{selectedProgressPct}%</span>
               </div>
               <div className="h-2 rounded bg-white/10">
@@ -636,21 +680,28 @@ export default function ProductivityPlanner({ user, userProfile, riskScores }) {
                 const meta = CATEGORY_META[category]
                 const isDone = !!completionMap[task.id]
                 const status = getStatusForTask(selectedDate, isDone)
+                const taskIsFuture = isFutureDate(selectedDate, todayStart)
 
                 return (
-                  <div key={task.id} className={`rounded-lg border p-2 ${statusStyle(status)}`}>
+                  <div key={task.id} className={`rounded-lg border p-2 ${statusStyle(status)} ${taskIsFuture ? 'opacity-60' : ''}`}>
                     <div className="flex items-start gap-2">
-                      <input
-                        type="checkbox"
-                        checked={isDone}
-                        onChange={() => toggleComplete(task.id)}
-                        className="mt-1 h-4 w-4 accent-[#22c55e]"
-                      />
+                      {taskIsFuture ? (
+                        <span title="Complete this day when it arrives" className="mt-0.5 inline-flex h-4 w-4 items-center justify-center text-[13px] text-white/75">🔒</span>
+                      ) : (
+                        <input
+                          type="checkbox"
+                          checked={isDone}
+                          onChange={() => toggleComplete(task.id, selectedDate)}
+                          className="mt-1 h-4 w-4 accent-[#22c55e]"
+                        />
+                      )}
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-2">
                           <span className="text-[11px] font-mono text-white/80">{meta.icon} {meta.label}</span>
                           <span className="text-[10px] font-mono text-white/55">{formatTime(task.start_time)} - {formatTime(task.end_time)}</span>
                           <span className="rounded border border-white/20 px-1.5 py-0.5 text-[9px] font-mono text-white/70">{task.difficulty}</span>
+                          {taskIsFuture && <span className="rounded border border-white/25 bg-white/10 px-1.5 py-0.5 text-[9px] font-mono text-white/80">📅 Scheduled</span>}
+                          {!taskIsFuture && isDone && <span className="text-[10px] font-mono text-[#86efac]">✔</span>}
                         </div>
                         <p className={`text-[12px] font-semibold text-white ${isDone ? 'line-through text-white/50' : ''}`}>{task.title}</p>
                         <p className={`text-[10px] text-white/70 ${isDone ? 'line-through text-white/45' : ''}`}>{task.description}</p>
