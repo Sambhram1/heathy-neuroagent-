@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
+import { saveMessage, getMessages, saveRiskScores, getRiskScores } from '../lib/firestore'
 
 const WELCOME_MSG = {
   role: 'assistant',
@@ -55,12 +56,38 @@ function TypingIndicator() {
   )
 }
 
-export default function ChatInterface({ sessionId, onAgentResponse, planReady, onViewPlan }) {
+export default function ChatInterface({ user, sessionId, onAgentResponse, planReady, onViewPlan }) {
   const [messages, setMessages] = useState([WELCOME_MSG])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [initializing, setInitializing] = useState(true)
   const bottomRef = useRef(null)
   const inputRef = useRef(null)
+
+  // Load persisted messages and risk scores on mount
+  useEffect(() => {
+    if (!user?.uid) { setInitializing(false); return }
+    const load = async () => {
+      try {
+        const [savedMessages, savedScores] = await Promise.all([
+          getMessages(user.uid),
+          getRiskScores(user.uid),
+        ])
+        if (savedMessages.length > 0) {
+          setMessages(savedMessages.map(m => ({ role: m.role, content: m.content })))
+        }
+        if (savedScores) {
+          onAgentResponse({ risk_scores: savedScores })
+        }
+      } catch (err) {
+        console.error('Failed to load session:', err)
+      } finally {
+        setInitializing(false)
+      }
+    }
+    load()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.uid])
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -75,6 +102,11 @@ export default function ChatInterface({ sessionId, onAgentResponse, planReady, o
     setMessages(newMessages)
     setInput('')
     setIsLoading(true)
+
+    // Persist user message
+    if (user?.uid) {
+      saveMessage(user.uid, userMsg).catch(console.error)
+    }
 
     try {
       const res = await fetch('/api/chat', {
@@ -91,8 +123,19 @@ export default function ChatInterface({ sessionId, onAgentResponse, planReady, o
       }
 
       const data = await res.json()
-      setMessages(prev => [...prev, { role: 'assistant', content: data.message }])
+      const assistantMsg = { role: 'assistant', content: data.message }
+      setMessages(prev => [...prev, assistantMsg])
       onAgentResponse(data)
+
+      // Persist assistant message
+      if (user?.uid) {
+        saveMessage(user.uid, assistantMsg).catch(console.error)
+      }
+
+      // Persist risk scores if received
+      if (user?.uid && data.risk_scores) {
+        saveRiskScores(user.uid, data.risk_scores).catch(console.error)
+      }
     } catch (err) {
       setMessages(prev => [
         ...prev,
@@ -105,7 +148,7 @@ export default function ChatInterface({ sessionId, onAgentResponse, planReady, o
       setIsLoading(false)
       setTimeout(() => inputRef.current?.focus(), 100)
     }
-  }, [input, isLoading, messages, sessionId, onAgentResponse])
+  }, [input, isLoading, messages, sessionId, user, onAgentResponse])
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {

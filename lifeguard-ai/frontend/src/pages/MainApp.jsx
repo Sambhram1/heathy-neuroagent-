@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import ChatInterface from '../components/ChatInterface'
 import RiskDashboard from '../components/RiskDashboard'
 import MentalHealthPanel from '../components/MentalHealthPanel'
@@ -7,6 +7,7 @@ import DiagnosisUpload from '../components/DiagnosisUpload'
 import ExerciseVideos from '../components/ExerciseVideos'
 import DietPlan from '../components/DietPlan'
 import MentalHealthChat from '../components/MentalHealthChat'
+import { clearSession } from '../lib/firestore'
 
 const NAV = [
   { id: 'assessment', label: 'Assessment', num: '01', desc: 'Diagnostic AI' },
@@ -32,8 +33,40 @@ export default function MainApp({ user, onLogout }) {
   const [amplifiers, setAmplifiers] = useState([])
   const [evidence, setEvidence] = useState([])
   const [planReady, setPlanReady] = useState(false)
-  const [sessionId] = useState(() => crypto.randomUUID())
+  const [sessionId, setSessionId] = useState(() => crypto.randomUUID())
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [showAvatarMenu, setShowAvatarMenu] = useState(false)
+  const [startingFresh, setStartingFresh] = useState(false)
+  const avatarRef = useRef(null)
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handler = (e) => {
+      if (avatarRef.current && !avatarRef.current.contains(e.target)) {
+        setShowAvatarMenu(false)
+      }
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [])
+
+  const handleStartFresh = async () => {
+    if (!window.confirm('Start a fresh session? This will clear all chat messages.')) return
+    setStartingFresh(true)
+    try {
+      await clearSession(user.uid)
+      setRiskScores(null)
+      setAmplifiers([])
+      setEvidence([])
+      setPlanReady(false)
+      setSessionId(crypto.randomUUID())
+      setActiveNav('assessment')
+    } catch (err) {
+      console.error('Failed to clear session:', err)
+    } finally {
+      setStartingFresh(false)
+    }
+  }
 
   const handleAgentResponse = useCallback((response) => {
     if (response.risk_scores) setRiskScores(response.risk_scores)
@@ -119,15 +152,42 @@ export default function MainApp({ user, onLogout }) {
         </nav>
 
         {/* User section */}
-        <div className="px-3 pb-4 pt-3 border-t border-[rgba(255,255,255,0.06)]">
+        <div className="px-3 pb-4 pt-3 border-t border-[rgba(255,255,255,0.06)] space-y-2">
+          {/* Start Fresh */}
+          <button
+            onClick={handleStartFresh}
+            disabled={startingFresh}
+            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl
+              border border-[rgba(255,255,255,0.06)] text-[10px] font-mono uppercase tracking-widest
+              text-text-muted/50 hover:text-accent-500 hover:border-accent-500/30
+              disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+          >
+            {startingFresh ? (
+              <svg className="animate-spin w-3 h-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+              </svg>
+            ) : (
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <polyline points="1 4 1 10 7 10" />
+                <path d="M3.51 15a9 9 0 1 0 .49-3.51" />
+              </svg>
+            )}
+            Start Fresh
+          </button>
+
           <div className="flex items-center gap-3 px-3 py-3 rounded-xl bg-[rgba(255,255,255,0.02)] border border-[rgba(255,255,255,0.06)]">
-            <div className="w-8 h-8 rounded-full bg-[rgba(255,59,48,0.1)] border border-[rgba(255,59,48,0.2)] flex items-center justify-center flex-shrink-0">
-              <span className="text-[11px] font-medium text-accent-500">
-                {(user?.name || 'U')[0].toUpperCase()}
-              </span>
-            </div>
+            {user?.photoURL ? (
+              <img src={user.photoURL} alt="avatar" className="w-8 h-8 rounded-full flex-shrink-0 object-cover" />
+            ) : (
+              <div className="w-8 h-8 rounded-full bg-[rgba(255,59,48,0.1)] border border-[rgba(255,59,48,0.2)] flex items-center justify-center flex-shrink-0">
+                <span className="text-[11px] font-medium text-accent-500">
+                  {(user?.displayName || user?.email || 'U')[0].toUpperCase()}
+                </span>
+              </div>
+            )}
             <div className="flex-1 min-w-0">
-              <p className="text-[11px] text-text-primary font-medium truncate">{user?.name || 'User'}</p>
+              <p className="text-[11px] text-text-primary font-medium truncate">{user?.displayName || 'User'}</p>
               <p className="text-[9px] text-text-muted/50 font-mono truncate">{user?.email || ''}</p>
             </div>
             <button
@@ -161,10 +221,44 @@ export default function MainApp({ user, onLogout }) {
               <h1 className="text-sm font-medium tracking-wide text-text-primary leading-tight">{title}</h1>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full border border-[rgba(255,255,255,0.06)] bg-[rgba(255,255,255,0.02)]">
               <span className="w-1.5 h-1.5 rounded-full bg-accent-500 glow-anim" />
               <span className="text-[10px] font-mono uppercase tracking-widest text-text-muted">Active</span>
+            </div>
+            {/* Avatar dropdown */}
+            <div className="relative" ref={avatarRef}>
+              <button
+                onClick={() => setShowAvatarMenu(v => !v)}
+                className="w-8 h-8 rounded-full overflow-hidden border border-[rgba(255,255,255,0.1)] hover:border-accent-500/40 transition-all focus:outline-none"
+              >
+                {user?.photoURL ? (
+                  <img src={user.photoURL} alt="avatar" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full bg-accent-500/10 flex items-center justify-center text-[11px] font-medium text-accent-500">
+                    {(user?.displayName || user?.email || 'U')[0].toUpperCase()}
+                  </div>
+                )}
+              </button>
+              {showAvatarMenu && (
+                <div className="absolute right-0 top-10 w-56 rounded-xl border border-[rgba(255,255,255,0.1)] bg-[rgba(11,11,11,0.97)] backdrop-blur-xl shadow-2xl z-50 overflow-hidden">
+                  <div className="px-4 py-3 border-b border-[rgba(255,255,255,0.06)]">
+                    <p className="text-xs font-medium text-text-primary truncate">{user?.displayName || 'User'}</p>
+                    <p className="text-[10px] text-text-muted/60 font-mono truncate mt-0.5">{user?.email}</p>
+                  </div>
+                  <button
+                    onClick={() => { setShowAvatarMenu(false); onLogout() }}
+                    className="w-full flex items-center gap-3 px-4 py-3 text-[11px] font-mono uppercase tracking-widest text-text-muted hover:text-accent-500 hover:bg-accent-500/5 transition-all text-left"
+                  >
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                      <polyline points="16 17 21 12 16 7" />
+                      <line x1="21" y1="12" x2="9" y2="12" />
+                    </svg>
+                    Sign Out
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </header>
@@ -186,6 +280,8 @@ export default function MainApp({ user, onLogout }) {
               </div>
               <div className="flex-1 overflow-hidden">
                 <ChatInterface
+                  key={sessionId}
+                  user={user}
                   sessionId={sessionId}
                   onAgentResponse={handleAgentResponse}
                   planReady={planReady}
