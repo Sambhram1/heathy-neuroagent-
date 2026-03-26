@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import { signOut } from 'firebase/auth'
 import { doc, getDoc, updateDoc, serverTimestamp } from 'firebase/firestore'
 import { auth, db } from '../firebase'
@@ -7,7 +7,6 @@ import ChatInterface from '../components/ChatInterface'
 import RiskDashboard from '../components/RiskDashboard'
 import MentalHealthPanel from '../components/MentalHealthPanel'
 import PreventionPlan from '../components/PreventionPlan'
-import DiagnosisUpload from '../components/DiagnosisUpload'
 import ExerciseVideos from '../components/ExerciseVideos'
 import DietPlan from '../components/DietPlan'
 import MentalHealthChat from '../components/MentalHealthChat'
@@ -15,10 +14,9 @@ import MentalHealthChat from '../components/MentalHealthChat'
 const NAV = [
   { id: 'assessment', label: 'Assessment',    num: '01', desc: 'Diagnostic AI' },
   { id: 'risk',       label: 'Risk Dashboard', num: '02', desc: 'Biometric scores' },
-  { id: 'diagnosis',  label: 'Upload Report',  num: '03', desc: 'Optional upload' },
-  { id: 'exercise',   label: 'Exercise',       num: '04', desc: 'Video protocols' },
-  { id: 'diet',       label: 'Diet Plan',      num: '05', desc: 'Nutrition guide' },
-  { id: 'mental',     label: 'Mental Health',  num: '06', desc: 'Support chat' },
+  { id: 'exercise',   label: 'Exercise',       num: '03', desc: 'Video protocols' },
+  { id: 'diet',       label: 'Diet Plan',      num: '04', desc: 'Nutrition guide' },
+  { id: 'mental',     label: 'Mental Health',  num: '05', desc: 'Support chat' },
 ]
 
 // ─── Risk colour helper ────────────────────────────────────────────────────
@@ -69,6 +67,8 @@ export default function MainApp({ user }) {
   const [userProfile, setUserProfile] = useState(null)
   const [reportContext, setReportContext] = useState(null)
   const [hasAssessment, setHasAssessment] = useState(null)
+  const [chatHistory, setChatHistory] = useState([])
+  const riskPanelRef = useRef(null)
 
   // Load Firestore user data
   useEffect(() => {
@@ -83,6 +83,7 @@ export default function MainApp({ user }) {
           if (d.amplifiers)    setAmplifiers(d.amplifiers)
           if (d.profile)       setUserProfile(d.profile)
           if (d.reportContext) setReportContext(d.reportContext)
+          if (Array.isArray(d.chatHistory)) setChatHistory(d.chatHistory)
         } else {
           setHasAssessment(false)
         }
@@ -93,7 +94,7 @@ export default function MainApp({ user }) {
 
   const handleAssessmentComplete = useCallback(async ({ profile, riskScores: rs, amplifiers: amps, profileSummary }) => {
     setRiskScores(rs); setAmplifiers(amps); setUserProfile(profile)
-    setHasAssessment(true); setActiveNav('risk')
+    setHasAssessment(true); setActiveNav('assessment')
     if (user?.uid) {
       try {
         await updateDoc(doc(db, 'users', user.uid), {
@@ -128,11 +129,36 @@ export default function MainApp({ user }) {
     }
   }, [user?.uid])
 
+  const handleChatMessagesChange = useCallback((messages) => {
+    setChatHistory(messages)
+  }, [])
+
+  useEffect(() => {
+    if (!user?.uid || !hasAssessment || chatHistory.length === 0) return
+    const timer = setTimeout(async () => {
+      try {
+        await updateDoc(doc(db, 'users', user.uid), {
+          chatHistory: chatHistory.slice(-80),
+          chatUpdatedAt: serverTimestamp(),
+        })
+      } catch {}
+    }, 700)
+    return () => clearTimeout(timer)
+  }, [chatHistory, hasAssessment, user?.uid])
+
+  useEffect(() => {
+    const inAssessmentCore = activeNav === 'assessment' && hasAssessment
+    if (!inAssessmentCore) return
+    requestAnimationFrame(() => {
+      riskPanelRef.current?.scrollTo({ top: 0, behavior: 'auto' })
+    })
+  }, [activeNav, hasAssessment])
+
   const handleLogout = () => signOut(auth)
 
   const resetAssessment = () => {
     setHasAssessment(false); setRiskScores(null)
-    setAmplifiers([]); setUserProfile(null); setActiveNav('assessment')
+    setAmplifiers([]); setUserProfile(null); setChatHistory([]); setActiveNav('assessment')
   }
 
   // Loading
@@ -150,7 +176,6 @@ export default function MainApp({ user }) {
   const PANEL = {
     assessment: [hasAssessment ? 'DIAGNOSTIC CORE' : 'ONBOARDING', hasAssessment ? 'Assessment' : 'Initial Assessment'],
     risk:       ['BIOMETRIC RISK',    'Risk Dashboard'],
-    diagnosis:  ['CLINICAL DATA',     'Upload Report'],
     exercise:   ['MOVEMENT PROTOCOL', 'Exercise Videos'],
     diet:       ['NUTRITIONAL GUIDE', 'Diet Plan'],
     mental:     ['COGNITIVE SUPPORT', 'Mental Health'],
@@ -332,11 +357,14 @@ export default function MainApp({ user }) {
                   onViewPlan={() => setActiveNav('risk')}
                   userProfile={userProfile}
                   reportContext={reportContext}
+                  onReportSaved={handleReportSaved}
+                  initialMessages={chatHistory}
+                  onMessagesChange={handleChatMessagesChange}
                 />
               </div>
             </div>
             {/* Risk panel */}
-            <div className="flex-1 overflow-y-auto custom-scrollbar pb-4">
+            <div ref={riskPanelRef} className="flex-1 overflow-y-auto custom-scrollbar pb-4">
               <div className="mb-4 flex items-center gap-2">
                 <div className="h-px w-5 bg-[#E5E5E5]/35" />
                 <span className="text-[9px] font-mono text-white/25 tracking-widest uppercase">Biometric Risk</span>
@@ -364,9 +392,6 @@ export default function MainApp({ user }) {
                     <PreventionPlan planReady={planReady} evidence={evidence} />
                   </div>
                 </>
-              )}
-              {activeNav === 'diagnosis' && (
-                <DiagnosisUpload onReportSaved={handleReportSaved} existingReport={reportContext} />
               )}
               {activeNav === 'exercise' && <ExerciseVideos riskScores={riskScores} userProfile={userProfile} />}
               {activeNav === 'diet'     && <DietPlan riskScores={riskScores} userProfile={userProfile} />}

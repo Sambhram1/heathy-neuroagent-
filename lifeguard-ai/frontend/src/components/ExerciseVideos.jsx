@@ -56,8 +56,38 @@ function getRankedConditions(riskScores) {
   return [...scored.map((s) => s.id), 'yoga']
 }
 
+function getTargetIntensity(userProfile, maxIntensity) {
+  const level = userProfile?.activity_level
+  if (level === 'active' || level === 'very_active') return Math.min(3, maxIntensity)
+  if (level === 'moderate') return Math.min(2, maxIntensity)
+  return 1
+}
+
+function getPersonalizationScore(video, { activeCondition, rankedConditions, riskScores, userProfile, targetIntensity }) {
+  let score = 10
+
+  const riskRank = rankedConditions.indexOf(video.condition)
+  if (riskRank >= 0) score += Math.max(0, 40 - riskRank * 8)
+  if (video.condition === activeCondition) score += 12
+
+  const intensityDelta = Math.abs(video.intensity - targetIntensity)
+  score += Math.max(0, 10 - intensityDelta * 4)
+
+  const stress = riskScores?.mental_health_index ?? 0
+  const cvd = riskScores?.cvd_risk ?? 0
+  const diabetes = riskScores?.diabetes_risk ?? 0
+  const tags = (video.tags || []).join(' ').toLowerCase()
+
+  if (stress >= 55 && /(mindfulness|breathing|yoga|stress|grounding|pranayama)/.test(tags)) score += 8
+  if (cvd >= 60 && /(walking|low intensity|safe|seated|heart)/.test(tags)) score += 7
+  if (diabetes >= 60 && /(glucose|metabolic|insulin|walking|strength)/.test(tags)) score += 6
+
+  return score
+}
+
 function VideoCard({ video, color, isRecommended }) {
-  const [showEmbed, setShowEmbed] = useState(false)
+  const [thumbFailed, setThumbFailed] = useState(false)
+  const watchUrl = `https://www.youtube.com/watch?v=${video.id}`
 
   return (
     <div className="glass-card overflow-hidden hover:border-[rgba(255,255,255,0.15)] transition-all group animate-fade-in relative">
@@ -68,28 +98,28 @@ function VideoCard({ video, color, isRecommended }) {
       )}
 
       <div className="relative bg-[rgba(255,255,255,0.02)] aspect-video">
-        {showEmbed ? (
-          <iframe
-            src={`https://www.youtube.com/embed/${video.id}?autoplay=1`}
-            title={video.title}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-            className="absolute inset-0 w-full h-full"
-          />
+        {thumbFailed ? (
+          <div className="absolute inset-0 flex items-center justify-center p-4 text-center bg-[rgba(255,255,255,0.03)]">
+            <div>
+              <p className="text-xs text-text-primary mb-2">Video preview unavailable</p>
+              <p className="text-[11px] text-text-muted">Open on YouTube to play this session.</p>
+            </div>
+          </div>
         ) : (
           <>
             <img
               src={`https://img.youtube.com/vi/${video.id}/mqdefault.jpg`}
               alt={video.title}
               className="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity"
+              onError={() => setThumbFailed(true)}
             />
-            <button onClick={() => setShowEmbed(true)} className="absolute inset-0 flex items-center justify-center">
+            <a href={watchUrl} target="_blank" rel="noreferrer" className="absolute inset-0 flex items-center justify-center">
               <div className="w-12 h-12 rounded-full bg-[rgba(0,0,0,0.7)] border border-[rgba(255,255,255,0.2)] flex items-center justify-center group-hover:scale-110 transition-transform">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="text-white ml-1">
                   <polygon points="5 3 19 12 5 21 5 3" />
                 </svg>
               </div>
-            </button>
+            </a>
             <div className="absolute bottom-2 right-2 px-2 py-0.5 rounded bg-black/80 text-[11px] font-mono text-white/70">{video.duration}</div>
           </>
         )}
@@ -105,6 +135,14 @@ function VideoCard({ video, color, isRecommended }) {
             </span>
           ))}
         </div>
+        <a
+          href={watchUrl}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex mt-3 text-[11px] px-2.5 py-1 rounded font-mono uppercase tracking-widest border border-[rgba(255,255,255,0.15)] text-text-muted hover:text-text-primary hover:border-[rgba(255,255,255,0.3)]"
+        >
+          Open on YouTube
+        </a>
       </div>
     </div>
   )
@@ -113,6 +151,7 @@ function VideoCard({ video, color, isRecommended }) {
 export default function ExerciseVideos({ riskScores, userProfile }) {
   const rankedConditions = useMemo(() => getRankedConditions(riskScores), [riskScores])
   const maxIntensity = useMemo(() => getMaxIntensity(riskScores), [riskScores])
+  const targetIntensity = useMemo(() => getTargetIntensity(userProfile, maxIntensity), [userProfile, maxIntensity])
   const [activeCondition, setActiveCondition] = useState(() => rankedConditions[0])
 
   const filteredVideos = useMemo(() => {
@@ -121,8 +160,35 @@ export default function ExerciseVideos({ riskScores, userProfile }) {
       .sort((a, b) => a.intensity - b.intensity)
   }, [activeCondition, maxIntensity])
 
+  const personalizedVideos = useMemo(() => {
+    const scored = ALL_VIDEOS
+      .filter((v) => v.intensity <= maxIntensity)
+      .map((v) => ({
+        ...v,
+        _score: getPersonalizationScore(v, {
+          activeCondition,
+          rankedConditions,
+          riskScores,
+          userProfile,
+          targetIntensity,
+        }),
+      }))
+      .sort((a, b) => b._score - a._score)
+
+    const seen = new Set()
+    return scored.filter((v) => {
+      if (seen.has(v.id)) return false
+      seen.add(v.id)
+      return true
+    }).slice(0, 12)
+  }, [activeCondition, rankedConditions, riskScores, userProfile, maxIntensity, targetIntensity])
+
+  const moreInActiveCondition = useMemo(() => {
+    const chosen = new Set(personalizedVideos.map((v) => v.id))
+    return filteredVideos.filter((v) => !chosen.has(v.id)).slice(0, 6)
+  }, [filteredVideos, personalizedVideos])
+
   const meta = CONDITION_META[activeCondition]
-  const topScore = riskScores?.[meta?.scoreKey]
 
   // Intensity warning
   const intensityWarning = maxIntensity < 3 && (activeCondition === 'cvd' || activeCondition === 'hypertension')
@@ -184,14 +250,42 @@ export default function ExerciseVideos({ riskScores, userProfile }) {
       )}
 
       {/* Videos */}
-      {filteredVideos.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredVideos.map((v, i) => (
-            <VideoCard key={v.id} video={v} color={meta?.color || '#F5F5F5'} isRecommended={i === 0 && !!riskScores} />
-          ))}
-        </div>
+      {personalizedVideos.length > 0 ? (
+        <>
+          <div className="flex items-center justify-between">
+            <p className="text-[11px] font-mono uppercase tracking-[0.2em] text-text-muted">Personalized Recommendations</p>
+            <p className="text-[11px] text-text-muted/60 font-mono">{personalizedVideos.length} videos matched</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {personalizedVideos.map((v, i) => (
+              <VideoCard key={`${v.id}-${i}`} video={v} color={CONDITION_META[v.condition]?.color || '#F5F5F5'} isRecommended={i < 2 && !!riskScores} />
+            ))}
+          </div>
+        </>
       ) : (
         <div className="glass-card p-8 text-center border-dashed">
+          <p className="text-sm text-text-muted">No videos match your current intensity filter.</p>
+          <p className="text-[11px] text-text-muted/50 font-mono mt-2">Try reducing risk filters or selecting Yoga/Mental categories.</p>
+        </div>
+      )}
+
+      {moreInActiveCondition.length > 0 && (
+        <>
+          <div className="flex items-center justify-between pt-2">
+            <p className="text-[11px] font-mono uppercase tracking-[0.2em] text-text-muted">More In {meta?.label}</p>
+            <p className="text-[11px] text-text-muted/60 font-mono">{moreInActiveCondition.length} extra</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {moreInActiveCondition.map((v) => (
+              <VideoCard key={`extra-${v.id}`} video={v} color={meta?.color || '#F5F5F5'} isRecommended={false} />
+            ))}
+          </div>
+        </>
+      )}
+
+      {/* Legacy fallback if condition has no videos */}
+      {filteredVideos.length === 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <p className="text-sm text-text-muted">No videos match your current intensity filter for this category.</p>
           <p className="text-[11px] text-text-muted/50 font-mono mt-2">Try Yoga or Mental Health for gentler options.</p>
         </div>

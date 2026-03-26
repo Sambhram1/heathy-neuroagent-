@@ -434,28 +434,29 @@ export default function DietPlan({ riskScores, userProfile }) {
         })}
       </div>
 
-      {/* ── Eat more + Gaps ─────────────────────────────────────────────────── */}
-      {(addMore.length > 0 || gaps.length > 0) && (
+      {/* ── Prioritise + Avoid (side by side) ─────────────────────────────── */}
+      {(addMore.length > 0 || avoidsToShow.length > 0) && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {addMore.length > 0 && (
-            <div className="glass-card p-5 border-l-2 border-[rgba(134,239,172,0.4)]">
-              <p className="text-[11px] font-mono uppercase tracking-[0.2em] text-[rgba(134,239,172,0.7)] mb-3">Prioritise These Foods</p>
+            <div className="glass-card p-5 border-l-2 border-[rgba(34,197,94,0.55)] bg-[rgba(34,197,94,0.05)]">
+              <p className="text-[11px] font-mono uppercase tracking-[0.2em] text-[#22c55e] mb-3">Prioritise These Foods</p>
               <div className="space-y-2">
                 {addMore.slice(0, 5).map((r, i) => (
-                  <p key={i} className="text-[11px] text-text-muted tracking-wide flex gap-2">
-                    <span className="text-[rgba(134,239,172,0.5)] flex-shrink-0">+</span>{r}
+                  <p key={i} className="text-[11px] text-[rgba(220,252,231,0.95)] tracking-wide flex gap-2">
+                    <span className="text-[#22c55e] flex-shrink-0">+</span>{r}
                   </p>
                 ))}
               </div>
             </div>
           )}
-          {gaps.length > 0 && (
-            <div className="glass-card p-5 border-l-2 border-[rgba(251,191,36,0.4)]">
-              <p className="text-[11px] font-mono uppercase tracking-[0.2em] text-[rgba(251,191,36,0.7)] mb-3">Nutrient Gaps to Address</p>
+
+          {avoidsToShow.length > 0 && (
+            <div className="glass-card p-5 border-l-2 border-[rgba(239,68,68,0.55)] bg-[rgba(239,68,68,0.05)]">
+              <p className="text-[11px] font-mono uppercase tracking-[0.2em] text-[#ef4444] mb-3">Avoid These Foods</p>
               <div className="space-y-2">
-                {gaps.map((g, i) => (
-                  <p key={i} className="text-[11px] text-text-muted tracking-wide flex gap-2">
-                    <span className="text-[rgba(251,191,36,0.5)] flex-shrink-0">⚠</span>{g}
+                {avoidsToShow.slice(0, 6).map((f, i) => (
+                  <p key={i} className="text-[11px] text-[rgba(254,226,226,0.95)] tracking-wide flex gap-2">
+                    <span className="text-[#ef4444] flex-shrink-0">-</span>{f}
                   </p>
                 ))}
               </div>
@@ -464,13 +465,15 @@ export default function DietPlan({ riskScores, userProfile }) {
         </div>
       )}
 
-      {/* ── Avoid list ──────────────────────────────────────────────────────── */}
-      {avoidsToShow.length > 0 && (
-        <div className="glass-card p-5 border-l-2 border-accent-500/30">
-          <p className="text-[11px] font-mono uppercase tracking-[0.2em] text-accent-500 mb-3">Limit or Avoid</p>
-          <div className="flex flex-wrap gap-2">
-            {avoidsToShow.map((f, i) => (
-              <span key={i} className="text-[11px] px-3 py-1 rounded border border-accent-500/15 text-text-muted font-mono tracking-wide">{f}</span>
+      {/* ── Nutrient gaps ───────────────────────────────────────────────────── */}
+      {gaps.length > 0 && (
+        <div className="glass-card p-5 border-l-2 border-[rgba(251,191,36,0.4)]">
+          <p className="text-[11px] font-mono uppercase tracking-[0.2em] text-[rgba(251,191,36,0.7)] mb-3">Nutrient Gaps to Address</p>
+          <div className="space-y-2">
+            {gaps.map((g, i) => (
+              <p key={i} className="text-[11px] text-text-muted tracking-wide flex gap-2">
+                <span className="text-[rgba(251,191,36,0.5)] flex-shrink-0">⚠</span>{g}
+              </p>
             ))}
           </div>
         </div>

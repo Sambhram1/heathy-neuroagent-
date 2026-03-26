@@ -72,20 +72,6 @@ function RecommendationCard({ rec }) {
   )
 }
 
-function EmptyPlanState() {
-  return (
-    <div className="flex flex-col items-center justify-center py-24 text-center glass-card border-dashed">
-      <div className="w-16 h-16 rounded-full border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.02)] flex items-center justify-center mb-6 float-anim backdrop-blur-md">
-        <span className="w-4 h-4 rounded-full border-2 border-accent-500 animate-pulse" />
-      </div>
-      <p className="text-sm font-medium tracking-widest text-text-primary uppercase mb-2">Awaiting Parameters</p>
-      <p className="text-[11px] text-text-muted tracking-wide max-w-[200px] leading-relaxed mx-auto">
-        Complete diagnostic sequence in the communication core to synthesize protocol.
-      </p>
-    </div>
-  )
-}
-
 // Static plan shown when plan_ready is true but no structured plan data yet
 const STATIC_PLAN = {
   priority_actions: [
@@ -171,7 +157,7 @@ export default function PreventionPlan({ planReady, evidence }) {
   const [activeTab, setActiveTab] = useState('priority')
   const [showEvidence, setShowEvidence] = useState(false)
 
-  if (!planReady) return <EmptyPlanState />
+  if (!planReady) return null
 
   const plan = STATIC_PLAN
   const currentTab = PLAN_TABS.find(t => t.id === activeTab)

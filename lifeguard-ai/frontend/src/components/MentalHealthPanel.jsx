@@ -34,6 +34,16 @@ function ScoreBar({ label, score, max, colorStops }) {
     return ''
   }
 
+  const getDetailText = () => {
+    if (label === 'PHQ-9 Depression') {
+      return 'Scale: 0-4 Minimal, 5-9 Mild, 10-14 Moderate, 15-19 Moderately Severe, 20-27 Severe. This is a screening estimate, not a diagnosis.'
+    }
+    if (label === 'GAD-7 Anxiety') {
+      return 'Scale: 0-4 Minimal, 5-9 Mild, 10-14 Moderate, 15-21 Severe. This is a screening estimate and should be clinically validated if persistent.'
+    }
+    return 'Score interpretation is based on standard screening band thresholds.'
+  }
+
   return (
     <div className="glass-card p-4 space-y-3 relative overflow-hidden group hover:border-[rgba(255,255,255,0.15)] transition-all">
       <div className="absolute top-0 left-0 w-64 h-64 bg-accent-500/5 blur-[80px] rounded-full pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -62,6 +72,12 @@ function ScoreBar({ label, score, max, colorStops }) {
           }}
         />
       </div>
+
+      <div className="relative z-10 max-h-0 opacity-0 overflow-hidden transition-all duration-250 group-hover:max-h-24 group-hover:opacity-100">
+        <div className="mt-2 pt-2 border-t border-[rgba(255,255,255,0.06)]">
+          <p className="text-[11px] leading-relaxed text-text-muted tracking-wide">{getDetailText()}</p>
+        </div>
+      </div>
     </div>
   )
 }
@@ -76,7 +92,8 @@ function StressIndicator({ level }) {
   const color = level ? colors[Math.min(level - 1, 9)] : 'rgba(255,255,255,0.1)'
 
   return (
-    <div className="glass-card p-4 flex items-center justify-between">
+    <div className="glass-card p-4 group hover:border-[rgba(255,255,255,0.15)] transition-all">
+      <div className="flex items-center justify-between">
       <div>
         <p className="text-[11px] uppercase tracking-widest font-medium text-text-muted mb-2">Cortisol / Stress</p>
         <div className="flex gap-1">
@@ -98,6 +115,15 @@ function StressIndicator({ level }) {
         </p>
         <span className="text-[11px] text-text-muted uppercase tracking-widest mt-1">Somatic Load</span>
       </div>
+      </div>
+
+      <div className="max-h-0 opacity-0 overflow-hidden transition-all duration-250 group-hover:max-h-20 group-hover:opacity-100">
+        <div className="mt-3 pt-3 border-t border-[rgba(255,255,255,0.06)]">
+          <p className="text-[11px] leading-relaxed text-text-muted tracking-wide">
+            Somatic load reflects stress burden from behavioral and sleep signals. Higher values indicate more physiological stress pressure.
+          </p>
+        </div>
+      </div>
     </div>
   )
 }
@@ -112,15 +138,25 @@ function SleepBadge({ quality }) {
 
   return (
     <div
-      className="glass-card p-4 flex items-center gap-4"
+      className="glass-card p-4 group hover:border-[rgba(255,255,255,0.15)] transition-all"
       style={{ background: c.bg, borderColor: c.border }}
     >
-      <div className="w-10 h-10 rounded flex items-center justify-center border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.02)]">
-        <span className="text-[11px] font-mono font-bold tracking-widest" style={{ color: c.color }}>{c.code}</span>
+      <div className="flex items-center gap-4">
+        <div className="w-10 h-10 rounded flex items-center justify-center border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.02)]">
+          <span className="text-[11px] font-mono font-bold tracking-widest" style={{ color: c.color }}>{c.code}</span>
+        </div>
+        <div>
+          <p className="text-[11px] uppercase tracking-widest text-text-muted mb-1">REM / Deep Sleep Index</p>
+          <p className="text-xs font-semibold tracking-wide" style={{ color: c.color }}>{c.label}</p>
+        </div>
       </div>
-      <div>
-        <p className="text-[11px] uppercase tracking-widest text-text-muted mb-1">REM / Deep Sleep Index</p>
-        <p className="text-xs font-semibold tracking-wide" style={{ color: c.color }}>{c.label}</p>
+
+      <div className="max-h-0 opacity-0 overflow-hidden transition-all duration-250 group-hover:max-h-20 group-hover:opacity-100">
+        <div className="mt-3 pt-3 border-t border-[rgba(255,255,255,0.06)]">
+          <p className="text-[11px] leading-relaxed text-text-muted tracking-wide">
+            Recovery status is inferred from sleep quality signals. Optimal means stronger overnight restoration; suboptimal or deficient suggests reduced recovery.
+          </p>
+        </div>
       </div>
     </div>
   )

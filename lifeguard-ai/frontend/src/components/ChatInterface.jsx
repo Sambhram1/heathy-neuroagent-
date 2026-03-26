@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { apiUrl } from '../lib/apiBase'
+import DiagnosisUpload from './DiagnosisUpload'
 
 function buildSystemContext(userProfile, reportContext) {
   if (!userProfile && !reportContext) return null
@@ -76,15 +77,26 @@ function TypingIndicator() {
   )
 }
 
-export default function ChatInterface({ sessionId, onAgentResponse, planReady, onViewPlan, userProfile, reportContext }) {
-  const [messages, setMessages] = useState([WELCOME_MSG])
+export default function ChatInterface({ sessionId, onAgentResponse, planReady, onViewPlan, userProfile, reportContext, onReportSaved, initialMessages = [], onMessagesChange }) {
+  const [messages, setMessages] = useState(() => (initialMessages.length > 0 ? initialMessages : [WELCOME_MSG]))
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [showUpload, setShowUpload] = useState(false)
   const bottomRef = useRef(null)
   const inputRef = useRef(null)
 
+  useEffect(() => {
+    if (initialMessages.length > 0) {
+      setMessages(initialMessages)
+    }
+  }, [initialMessages])
+
+  useEffect(() => {
+    onMessagesChange?.(messages)
+  }, [messages, onMessagesChange])
+
   // Inject profile context as a hidden system message when profile first loads
-  const profileInjectedRef = useRef(false)
+  const profileInjectedRef = useRef(initialMessages.length > 1)
   useEffect(() => {
     if (userProfile && !profileInjectedRef.current) {
       profileInjectedRef.current = true
@@ -147,6 +159,20 @@ export default function ChatInterface({ sessionId, onAgentResponse, planReady, o
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage() }
   }
 
+  const handleReportSaveFromChat = useCallback((ctx) => {
+    onReportSaved?.(ctx)
+    setShowUpload(false)
+    if (ctx) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: 'assistant',
+          content: `Report integrated: **${ctx.filename}**. I will include this data in the diagnostic context for upcoming responses.`,
+        },
+      ])
+    }
+  }, [onReportSaved])
+
   return (
     <div className="flex flex-col h-full bg-[rgba(11,11,11,0.5)]">
       <div className="flex-shrink-0 px-6 py-4 border-b border-[rgba(255,255,255,0.05)] bg-[rgba(255,255,255,0.01)] backdrop-blur-md">
@@ -181,6 +207,17 @@ export default function ChatInterface({ sessionId, onAgentResponse, planReady, o
 
       <div className="flex-shrink-0 px-6 pb-6 pt-2">
         <div className="flex gap-3 items-end p-2 bg-[rgba(255,255,255,0.02)] border border-[rgba(255,255,255,0.08)] rounded-xl focus-within:border-[rgba(255,255,255,0.2)] focus-within:bg-[rgba(255,255,255,0.03)] transition-all">
+          <button
+            onClick={() => setShowUpload(true)}
+            className="flex-shrink-0 w-10 h-10 rounded border border-[rgba(255,255,255,0.1)] flex items-center justify-center bg-[rgba(255,255,255,0.02)] hover:bg-[rgba(255,255,255,0.1)] hover:border-[rgba(255,255,255,0.2)] transition-all text-text-primary"
+            title="Upload report"
+            type="button"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <path d="M12 5V19" />
+              <path d="M5 12H19" />
+            </svg>
+          </button>
           <textarea
             ref={inputRef}
             className="flex-1 resize-none bg-transparent px-3 py-2 text-xs font-mono tracking-wide text-text-primary min-h-[40px] max-h-[120px] focus:outline-none placeholder:text-text-muted/40"
@@ -209,6 +246,21 @@ export default function ChatInterface({ sessionId, onAgentResponse, planReady, o
           </p>
         </div>
       </div>
+
+      {showUpload && (
+        <div className="absolute inset-0 z-30 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="w-full max-w-3xl max-h-[90%] overflow-y-auto rounded-2xl border border-[rgba(255,255,255,0.12)] bg-[#0B0B0B] p-4 relative">
+            <button
+              onClick={() => setShowUpload(false)}
+              className="absolute top-3 right-3 text-[11px] font-mono uppercase tracking-widest text-text-muted hover:text-text-primary"
+              type="button"
+            >
+              Close
+            </button>
+            <DiagnosisUpload onReportSaved={handleReportSaveFromChat} existingReport={reportContext} />
+          </div>
+        </div>
+      )}
     </div>
   )
 }
