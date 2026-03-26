@@ -79,6 +79,32 @@ class ChatResponse(BaseModel):
     evidence: Optional[List[dict]] = None
 
 
+class AssessRequest(BaseModel):
+    age: int
+    sex: str
+    height_cm: float
+    weight_kg: float
+    waist_cm: Optional[float] = None
+    activity_level: str = "sedentary"
+    diet_quality: int = 5
+    sleep_hours: float = 7.0
+    sleep_quality: str = "fair"
+    stress_level: int = 5
+    family_history: List[str] = []
+    smoking: bool = False
+    alcohol: str = "none"
+    systolic_bp: Optional[float] = None
+    fasting_glucose: Optional[float] = None
+    phq9_estimate: int = 0
+    gad7_estimate: int = 0
+
+
+class AssessResponse(BaseModel):
+    risk_scores: RiskScores
+    amplifiers: List[str] = []
+    profile_summary: str = ""
+
+
 class MentalChatMessage(BaseModel):
     role: str
     content: str

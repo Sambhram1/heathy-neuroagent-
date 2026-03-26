@@ -9,9 +9,9 @@ export default {
       colors: {
         background: '#0B0B0B',
         accent: {
-          500: '#FF3B30',
-          600: '#E02A20',
-          DEFAULT: '#FF3B30',
+          500: '#E5E5E5',
+          600: '#BFBFBF',
+          DEFAULT: '#E5E5E5',
         },
         surface: {
           dark: 'rgba(255, 255, 255, 0.02)',
@@ -23,15 +23,15 @@ export default {
           muted: '#8E8E93',
         },
         risk: {
-          low: '#10b981', // keeping some standard colors for risk levels, but we can mute them
-          moderate: '#f59e0b',
-          high: '#f97316',
-          critical: '#FF3B30',
+          low: '#F5F5F5',
+          moderate: '#C8C8C8',
+          high: '#A7A7A7',
+          critical: '#E5E5E5',
         },
       },
       fontFamily: {
-        mono: ['DM Mono', 'Fira Mono', 'monospace'],
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        mono: ['IBM Plex Mono', 'ui-monospace', 'monospace'],
+        sans: ['Sora', 'system-ui', 'sans-serif'],
       },
       animation: {
         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',

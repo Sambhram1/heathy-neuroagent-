@@ -1,9 +1,9 @@
 export default function EvidenceCard({ source, text, condition, relevance_score }) {
   const conditionColors = {
-    diabetes: { color: '#f59e0b', bg: 'rgba(245,158,11,0.02)', border: 'rgba(245,158,11,0.2)', label: 'Metabolic' },
-    hypertension: { color: '#f97316', bg: 'rgba(249,115,22,0.02)', border: 'rgba(249,115,22,0.2)', label: 'Vascular' },
-    cvd: { color: '#FF3B30', bg: 'rgba(255,59,48,0.05)', border: 'rgba(255,59,48,0.3)', label: 'Cardio' },
-    mental_health: { color: '#eb4899', bg: 'rgba(235,72,153,0.02)', border: 'rgba(235,72,153,0.2)', label: 'Cognitive' },
+    diabetes: { color: '#C8C8C8', bg: 'rgba(200,200,200,0.02)', border: 'rgba(200,200,200,0.2)', label: 'Metabolic' },
+    hypertension: { color: '#A7A7A7', bg: 'rgba(167,167,167,0.02)', border: 'rgba(167,167,167,0.2)', label: 'Vascular' },
+    cvd: { color: '#E5E5E5', bg: 'rgba(229,229,229,0.05)', border: 'rgba(229,229,229,0.3)', label: 'Cardio' },
+    mental_health: { color: '#9E9E9E', bg: 'rgba(158,158,158,0.02)', border: 'rgba(158,158,158,0.2)', label: 'Cognitive' },
   }
   const c = conditionColors[condition] || { color: '#F5F5F5', bg: 'rgba(255,255,255,0.02)', border: 'rgba(255,255,255,0.1)', label: 'General' }
 

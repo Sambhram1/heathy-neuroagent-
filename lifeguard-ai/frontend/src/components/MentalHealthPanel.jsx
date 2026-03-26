@@ -69,8 +69,8 @@ function ScoreBar({ label, score, max, colorStops }) {
 function StressIndicator({ level }) {
   const emojis = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10']
   const colors = [
-    '#F5F5F5', '#F5F5F5', '#E5E5E5', '#f59e0b',
-    '#f59e0b', '#f97316', '#f97316', '#FF3B30', '#FF3B30', '#E02A20'
+    '#F5F5F5', '#F5F5F5', '#E5E5E5', '#C8C8C8',
+    '#C8C8C8', '#A7A7A7', '#A7A7A7', '#E5E5E5', '#E5E5E5', '#BFBFBF'
   ]
   const emoji = level ? emojis[Math.min(level - 1, 9)] : '--'
   const color = level ? colors[Math.min(level - 1, 9)] : 'rgba(255,255,255,0.1)'
@@ -105,8 +105,8 @@ function StressIndicator({ level }) {
 function SleepBadge({ quality }) {
   const config = {
     good: { color: '#F5F5F5', bg: 'rgba(255,255,255,0.03)', border: 'rgba(255,255,255,0.1)', code: 'OPT', label: 'Optimal Recovery' },
-    fair: { color: '#f59e0b', bg: 'rgba(245,158,11,0.05)', border: 'rgba(245,158,11,0.2)', code: 'SUB', label: 'Suboptimal' },
-    poor: { color: '#FF3B30', bg: 'rgba(255,59,48,0.05)', border: 'rgba(255,59,48,0.2)', code: 'CRI', label: 'Deficient' },
+    fair: { color: '#C8C8C8', bg: 'rgba(200,200,200,0.05)', border: 'rgba(200,200,200,0.2)', code: 'SUB', label: 'Suboptimal' },
+    poor: { color: '#E5E5E5', bg: 'rgba(229,229,229,0.05)', border: 'rgba(229,229,229,0.2)', code: 'CRI', label: 'Deficient' },
   }
   const c = config[quality] || { color: '#8E8E93', bg: 'rgba(255,255,255,0.01)', border: 'rgba(255,255,255,0.05)', code: 'N/A', label: 'Not assessed' }
 
@@ -166,13 +166,13 @@ export default function MentalHealthPanel({ riskScores, amplifiers }) {
           label="PHQ-9 Depression"
           score={phq9_est}
           max={27}
-          colorStops={['#F5F5F5', '#f59e0b', '#f97316', '#FF3B30']}
+          colorStops={['#F5F5F5', '#C8C8C8', '#A7A7A7', '#E5E5E5']}
         />
         <ScoreBar
           label="GAD-7 Anxiety"
           score={gad7_est}
           max={21}
-          colorStops={['#F5F5F5', '#f59e0b', '#f97316', '#FF3B30']}
+          colorStops={['#F5F5F5', '#C8C8C8', '#A7A7A7', '#E5E5E5']}
         />
       </div>
 
@@ -184,7 +184,7 @@ export default function MentalHealthPanel({ riskScores, amplifiers }) {
 
       {/* Alert for high scores */}
       {showAlert && (
-        <div className="glass-card p-5 border-l-2 border-accent-500 animate-fade-in relative overflow-hidden" style={{ background: 'rgba(255,59,48,0.04)' }}>
+        <div className="glass-card p-5 border-l-2 border-accent-500 animate-fade-in relative overflow-hidden" style={{ background: 'rgba(229,229,229,0.04)' }}>
           <div className="absolute top-0 right-0 w-32 h-32 bg-accent-500/10 blur-[40px] rounded-full pointer-events-none" />
           <div className="flex items-start gap-4 relative z-10 flex-col md:flex-row">
             <div className="w-8 h-8 rounded bg-accent-500/10 border border-accent-500/20 flex items-center justify-center text-accent-500 shrink-0">
@@ -223,7 +223,7 @@ export default function MentalHealthPanel({ riskScores, amplifiers }) {
           </div>
           <div className="grid grid-cols-1 gap-3">
             {amplifiers.map((amp, i) => (
-              <div key={i} className="glass-card p-4 border-l-2 border-[rgba(255,255,255,0.2)] bg-[rgba(255,255,255,0.01)] hover:border-accent-500 hover:bg-[rgba(255,59,48,0.02)] transition-colors">
+              <div key={i} className="glass-card p-4 border-l-2 border-[rgba(255,255,255,0.2)] bg-[rgba(255,255,255,0.01)] hover:border-accent-500 hover:bg-[rgba(229,229,229,0.02)] transition-colors">
                 <p className="text-xs text-text-muted leading-relaxed tracking-wide"
                   dangerouslySetInnerHTML={{ __html: amp.replace(/\*\*(.*?)\*\*/g, '<strong class="text-text-primary">$1</strong>') }}
                 />

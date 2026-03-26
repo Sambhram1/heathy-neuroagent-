@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 import uvicorn
 
-from models.schemas import ChatRequest, ChatResponse, RiskScores, MentalChatRequest, MentalChatResponse
+from models.schemas import ChatRequest, ChatResponse, RiskScores, MentalChatRequest, MentalChatResponse, AssessRequest, AssessResponse
 from agents.orchestrator import run_agent
 from agents.mental_chat import run_mental_chat
 from rag.knowledge_base import initialize_kb, get_document_count
@@ -105,6 +105,50 @@ async def chat(request: ChatRequest):
     )
 
 
+@app.post("/api/assess", response_model=AssessResponse)
+async def assess(req: AssessRequest):
+    from agents.risk_scorer import calculate_risk_scores
+    from agents.psychosomatic import calculate_amplification
+
+    bmi = req.weight_kg / ((req.height_cm / 100) ** 2)
+
+    risk_scores = calculate_risk_scores(
+        age=req.age,
+        sex=req.sex,
+        bmi=round(bmi, 1),
+        waist_cm=req.waist_cm,
+        activity_level=req.activity_level,
+        diet_quality=req.diet_quality,
+        sleep_hours=req.sleep_hours,
+        sleep_quality=req.sleep_quality,
+        stress_level=req.stress_level,
+        family_history=req.family_history,
+        smoking=req.smoking,
+        phq9_estimate=req.phq9_estimate,
+        gad7_estimate=req.gad7_estimate,
+        systolic_bp=req.systolic_bp,
+        fasting_glucose=req.fasting_glucose,
+    )
+
+    amplifiers = calculate_amplification(
+        stress_level=req.stress_level,
+        sleep_hours=req.sleep_hours,
+        phq9_score=req.phq9_estimate,
+        gad7_score=req.gad7_estimate,
+        diabetes_risk=risk_scores.diabetes_risk,
+        hypertension_risk=risk_scores.hypertension_risk,
+    )
+
+    conditions = []
+    if risk_scores.diabetes_risk >= 40: conditions.append("metabolic risk")
+    if risk_scores.hypertension_risk >= 40: conditions.append("vascular risk")
+    if risk_scores.cvd_risk >= 40: conditions.append("cardiovascular risk")
+    if risk_scores.mental_health_index >= 40: conditions.append("psychosomatic load")
+    summary = f"Profile: {req.age}yo {req.sex}, BMI {round(bmi,1)}. Elevated: {', '.join(conditions) if conditions else 'none detected'}."
+
+    return AssessResponse(risk_scores=risk_scores, amplifiers=amplifiers, profile_summary=summary)
+
+
 @app.post("/api/mental-chat", response_model=MentalChatResponse)
 async def mental_chat(request: MentalChatRequest):
     messages = [{"role": m.role, "content": m.content} for m in request.messages]
@@ -130,4 +174,4 @@ async def reset_session(body: dict):
 
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=False)

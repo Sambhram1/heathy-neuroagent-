@@ -8,9 +8,9 @@ const ARC = CIRCUMFERENCE * 0.75
 function getRiskColor(score) {
   if (score === null || score === undefined) return 'rgba(255,255,255,0.1)'
   if (score < 30) return '#F5F5F5' // White for healthy
-  if (score < 55) return '#f59e0b'
-  if (score < 75) return '#f97316'
-  return '#FF3B30' // Red for critical
+  if (score < 55) return '#C8C8C8'
+  if (score < 75) return '#A7A7A7'
+  return '#E5E5E5' // Red for critical
 }
 
 function getRiskLabel(score) {
@@ -24,8 +24,8 @@ function getRiskLabel(score) {
 function getRiskLabelColor(score) {
   if (score === null || score === undefined) return 'text-text-muted'
   if (score < 30) return 'text-text-primary'
-  if (score < 55) return 'text-amber-500'
-  if (score < 75) return 'text-orange-500'
+  if (score < 55) return 'text-[#C8C8C8]'
+  if (score < 75) return 'text-[#A7A7A7]'
   return 'text-accent-500'
 }
 
@@ -124,7 +124,7 @@ function GaugeChart({ label, score, icon }) {
 
 function AmplifierCard({ text }) {
   return (
-    <div className="glass-card p-4 border-l-2 border-accent-500/50 animate-fade-in bg-[rgba(255,59,48,0.02)]">
+    <div className="glass-card p-4 border-l-2 border-accent-500/50 animate-fade-in bg-[rgba(229,229,229,0.02)]">
       <p className="text-xs text-text-muted leading-relaxed tracking-wide"
         dangerouslySetInnerHTML={{ __html: text.replace(/\*\*(.*?)\*\*/g, '<strong class="text-text-primary">$1</strong>') }}
       />
@@ -139,7 +139,7 @@ function OverallRiskBadge({ score }) {
   return (
     <div
       className="glass-card p-6 flex items-center justify-between overflow-hidden relative"
-      style={{ borderColor: score >= 75 ? `rgba(255,59,48,0.3)` : undefined }}
+      style={{ borderColor: score >= 75 ? `rgba(229,229,229,0.3)` : undefined }}
     >
       <div className="absolute top-0 right-0 w-64 h-64 bg-accent-500/5 blur-[100px] rounded-full pointer-events-none" />
       

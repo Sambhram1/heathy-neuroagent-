@@ -17,15 +17,15 @@ function Bubble({ msg }) {
   return (
     <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4 animate-slide-up`}>
       {!isUser && (
-        <div className="w-7 h-7 rounded-full border border-[rgba(235,72,153,0.3)] flex items-center justify-center mr-3 flex-shrink-0 bg-[rgba(235,72,153,0.05)]">
-          <span className="w-2 h-2 rounded-full bg-[#eb4899]" style={{ animation: 'glow-pulse 2s ease-in-out infinite' }} />
+        <div className="w-7 h-7 rounded-full border border-[rgba(158,158,158,0.3)] flex items-center justify-center mr-3 flex-shrink-0 bg-[rgba(158,158,158,0.05)]">
+          <span className="w-2 h-2 rounded-full bg-[#9E9E9E]" style={{ animation: 'glow-pulse 2s ease-in-out infinite' }} />
         </div>
       )}
       <div
         className={`max-w-[85%] px-5 py-3.5 text-xs leading-relaxed rounded-2xl ${
           isUser
             ? 'bg-[rgba(255,255,255,0.04)] border border-[rgba(255,255,255,0.08)] text-text-primary font-mono'
-            : 'text-text-muted border-l-2 border-[rgba(235,72,153,0.25)] pl-4 rounded-l-none'
+            : 'text-text-muted border-l-2 border-[rgba(158,158,158,0.25)] pl-4 rounded-l-none'
         }`}
       >
         <div dangerouslySetInnerHTML={{ __html: `<p>${formatMsg(msg.content)}</p>` }} className="tracking-wide" />
@@ -37,14 +37,14 @@ function Bubble({ msg }) {
 function Typing() {
   return (
     <div className="flex justify-start mb-4">
-      <div className="w-7 h-7 rounded-full border border-[rgba(235,72,153,0.3)] flex items-center justify-center mr-3 flex-shrink-0">
-        <span className="w-2 h-2 rounded-full bg-[#eb4899] opacity-50 animate-pulse" />
+      <div className="w-7 h-7 rounded-full border border-[rgba(158,158,158,0.3)] flex items-center justify-center mr-3 flex-shrink-0">
+        <span className="w-2 h-2 rounded-full bg-[#9E9E9E] opacity-50 animate-pulse" />
       </div>
-      <div className="px-4 py-3 flex items-center gap-2 border-l-2 border-[rgba(235,72,153,0.2)]">
+      <div className="px-4 py-3 flex items-center gap-2 border-l-2 border-[rgba(158,158,158,0.2)]">
         {[0, 150, 300].map((delay) => (
           <div
             key={delay}
-            className="w-1.5 h-1.5 bg-[#eb4899] rounded-full animate-bounce"
+            className="w-1.5 h-1.5 bg-[#9E9E9E] rounded-full animate-bounce"
             style={{ animationDelay: `${delay}ms` }}
           />
         ))}
@@ -53,7 +53,7 @@ function Typing() {
   )
 }
 
-export default function MentalHealthChat({ sessionId }) {
+export default function MentalHealthChat({ sessionId, userProfile, reportContext }) {
   const [messages, setMessages] = useState([WELCOME])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
@@ -76,13 +76,20 @@ export default function MentalHealthChat({ sessionId }) {
     setLoading(true)
 
     try {
+      // Prepend profile context to first user message if available
+      let apiMessages = history.map((m) => ({ role: m.role, content: m.content }))
+      if (userProfile || reportContext) {
+        const ctxParts = []
+        if (userProfile) ctxParts.push(`User profile: Age ${userProfile.age}, ${userProfile.sex}, stress ${userProfile.stress_level}/10, sleep ${userProfile.sleep_hours}h (${userProfile.sleep_quality}).`)
+        if (reportContext) ctxParts.push(`Uploaded report: "${reportContext.filename}". ${reportContext.notes || ''}`)
+        if (ctxParts.length > 0) {
+          apiMessages = [{ role: 'user', content: `[CONTEXT] ${ctxParts.join(' ')}` }, { role: 'assistant', content: 'Context received.' }, ...apiMessages.slice(1)]
+        }
+      }
       const res = await fetch('/api/mental-chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          messages: history.map((m) => ({ role: m.role, content: m.content })),
-          session_id: sessionId,
-        }),
+        body: JSON.stringify({ messages: apiMessages, session_id: sessionId }),
       })
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
       const data = await res.json()
@@ -110,7 +117,7 @@ export default function MentalHealthChat({ sessionId }) {
     <div className="flex flex-col h-full">
       {/* Crisis banner */}
       {crisis && (
-        <div className="flex-shrink-0 mx-4 mt-4 p-4 rounded-xl border border-accent-500/30 bg-[rgba(255,59,48,0.04)] animate-fade-in">
+        <div className="flex-shrink-0 mx-4 mt-4 p-4 rounded-xl border border-accent-500/30 bg-[rgba(229,229,229,0.04)] animate-fade-in">
           <p className="text-[10px] font-mono uppercase tracking-widest text-accent-500 mb-1">Crisis Support Available</p>
           <p className="text-[11px] text-text-muted leading-relaxed">
             <strong className="text-text-primary">iCall (TISS):</strong> 9152987821 · Mon–Sat 8am–10pm &nbsp;|&nbsp;
@@ -121,7 +128,7 @@ export default function MentalHealthChat({ sessionId }) {
 
       {/* Always-visible helpline bar */}
       <div className="flex-shrink-0 px-4 py-2 mt-2 flex items-center gap-3 border-b border-[rgba(255,255,255,0.04)]">
-        <span className="w-1.5 h-1.5 rounded-full bg-[#eb4899] opacity-50" />
+        <span className="w-1.5 h-1.5 rounded-full bg-[#9E9E9E] opacity-50" />
         <p className="text-[9px] font-mono uppercase tracking-widest text-text-muted/50">
           iCall: 9152987821 &nbsp;·&nbsp; Vandrevala 24/7: 1860-2662-345
         </p>
@@ -138,7 +145,7 @@ export default function MentalHealthChat({ sessionId }) {
 
       {/* Input */}
       <div className="flex-shrink-0 px-4 pb-4 pt-2">
-        <div className="flex gap-2 items-end p-2 bg-[rgba(255,255,255,0.02)] border border-[rgba(255,255,255,0.07)] rounded-xl focus-within:border-[rgba(235,72,153,0.3)] transition-all">
+        <div className="flex gap-2 items-end p-2 bg-[rgba(255,255,255,0.02)] border border-[rgba(255,255,255,0.07)] rounded-xl focus-within:border-[rgba(158,158,158,0.3)] transition-all">
           <textarea
             ref={inputRef}
             className="flex-1 resize-none bg-transparent px-3 py-2 text-xs font-mono tracking-wide text-text-primary min-h-[40px] max-h-[100px] focus:outline-none placeholder:text-text-muted/40"
@@ -152,7 +159,7 @@ export default function MentalHealthChat({ sessionId }) {
           <button
             onClick={send}
             disabled={loading || !input.trim()}
-            className="flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center bg-[rgba(235,72,153,0.1)] border border-[rgba(235,72,153,0.2)] hover:bg-[rgba(235,72,153,0.2)] disabled:opacity-30 disabled:cursor-not-allowed transition-all text-[#eb4899]"
+            className="flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center bg-[rgba(158,158,158,0.1)] border border-[rgba(158,158,158,0.2)] hover:bg-[rgba(158,158,158,0.2)] disabled:opacity-30 disabled:cursor-not-allowed transition-all text-[#9E9E9E]"
           >
             <svg width="14" height="14" viewBox="0 0 15 15" fill="none">
               <path d="M1.20308 1.04312C1.00481 0.954998 0.772341 1.00432 0.627577 1.16641C0.482813 1.3285 0.458494 1.56543 0.567086 1.75471L3.92482 7.5L0.567086 13.2453C0.458494 13.4346 0.482813 13.6715 0.627577 13.8336C0.772341 13.9957 1.00481 14.045 1.20308 13.9569L14.7031 7.95688C14.8836 7.87668 15 7.69762 15 7.5C15 7.30238 14.8836 7.12332 14.7031 7.04312L1.20308 1.04312Z" fill="currentColor" />

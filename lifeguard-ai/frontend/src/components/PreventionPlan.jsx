@@ -28,7 +28,7 @@ function RecommendationCard({ rec }) {
     // Doctor section items are strings
     const isAlert = rec.includes('⚠️')
     return (
-      <div className={`glass-card p-4 border-l-2 ${isAlert ? 'border-accent-500 bg-[rgba(255,59,48,0.02)]' : 'border-[rgba(255,255,255,0.2)] bg-[rgba(255,255,255,0.01)]'} animate-slide-up hover:border-[rgba(255,255,255,0.4)] transition-colors`}>
+      <div className={`glass-card p-4 border-l-2 ${isAlert ? 'border-accent-500 bg-[rgba(229,229,229,0.02)]' : 'border-[rgba(255,255,255,0.2)] bg-[rgba(255,255,255,0.01)]'} animate-slide-up hover:border-[rgba(255,255,255,0.4)] transition-colors`}>
         <p className="text-xs text-text-primary leading-relaxed tracking-wide"
           dangerouslySetInnerHTML={{
             __html: rec
