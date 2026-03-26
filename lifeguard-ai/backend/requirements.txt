@@ -7,3 +7,5 @@ python-dotenv
 httpx
 pandas
 numpy
+scikit-learn
+joblib

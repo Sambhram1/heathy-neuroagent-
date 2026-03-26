@@ -5,7 +5,10 @@ import os
 def _getenv_trimmed(name: str, default=None):
 	value = os.getenv(name, default)
 	if isinstance(value, str):
-		return value.strip().lstrip("\ufeff")
+		cleaned = value.strip().lstrip("\ufeff")
+		if len(cleaned) >= 2 and cleaned[0] == cleaned[-1] and cleaned[0] in ('"', "'"):
+			cleaned = cleaned[1:-1].strip()
+		return cleaned
 	return value
 
 # Resolve .env relative to this file (backend/../.env = lifeguard-ai/.env)

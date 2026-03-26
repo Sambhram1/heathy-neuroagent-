@@ -23,7 +23,7 @@ def generate_prevention_plan(
         "evidence_citations": retrieved_evidence[:5],
     }
 
-    # ── PRIORITY ACTIONS (Top 30-day goals) ─────────────────────────────────────
+   
     if diabetes > 40:
         plan["priority_actions"].append(
             "Start a 30-minute post-dinner walk every day this week. Studies show this alone reduces postprandial glucose by 22%."
@@ -47,7 +47,7 @@ def generate_prevention_plan(
         "Schedule a health check-up within the next 4 weeks: fasting glucose, lipid profile, BP measurement, and BMI."
     )
 
-    # ── NUTRITION ────────────────────────────────────────────────────────────────
+    
     plan["nutrition"].append({
         "recommendation": "Adopt the ICMR Plate: 45% millets/whole grains, 20% protein (dal, paneer, eggs, fish), 30% healthy fats, 5% natural sugars.",
         "why": "India-specific dietary pattern shown to prevent metabolic syndrome at population level (ICMR 2024).",

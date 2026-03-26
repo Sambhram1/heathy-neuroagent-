@@ -1,0 +1,81 @@
+food_id,food_name,region,is_vegetarian,meal_type,food_group,calories_per_100g,protein_g,carbs_g,sugar_g,fiber_g,fat_g,saturated_fat_g,sodium_mg,potassium_mg,magnesium_mg,glycemic_index,omega3_g,is_millet,is_fried,is_probiotic,tryptophan_rich,diabetes_score,hypertension_score,cvd_score,mental_score
+F001,Ragi Dosa,south,True,breakfast,cereals,120,3.5,22.0,0.5,2.7,2.5,0.5,100,150,137,68,0.1,True,False,True,False,0.95,1.0,1.0,1.0
+F002,Bajra Roti,north,True,breakfast/lunch/dinner,cereals,210,6.0,40.0,0.3,1.3,5.0,1.0,2,195,110,54,0.3,True,False,False,False,1.0,1.0,1.0,1.0
+F003,Jowar Roti,west,True,breakfast/lunch/dinner,cereals,195,6.5,39.0,0.5,2.7,2.0,0.5,2,270,75,62,0.1,True,False,False,False,0.95,1.0,1.0,1.0
+F004,Brown Rice (Cooked),pan-india,True,lunch/dinner,cereals,216,4.5,45.0,0.1,1.8,2.0,0.4,2,223,43,55,0.1,False,False,False,False,1.0,1.0,1.0,1.0
+F005,White Rice (Cooked),pan-india,True,lunch/dinner,cereals,204,4.3,45.0,0.1,0.4,0.5,0.1,1,55,12,72,0.0,False,False,False,False,0.6,1.0,1.0,1.0
+F006,Poha,west,True,breakfast,cereals,180,3.5,35.0,1.0,1.5,3.0,0.5,150,120,20,68,0.0,False,False,False,False,0.8,1.0,1.0,1.0
+F007,Upma,south,True,breakfast,cereals,170,5.0,30.0,1.5,1.0,5.0,1.0,200,130,25,60,0.0,False,False,False,False,0.8,1.0,1.0,1.0
+F008,Idli,south,True,breakfast,cereals,58,2.0,12.0,0.3,0.5,0.4,0.1,140,80,10,69,0.0,False,False,True,False,0.8,1.0,1.0,1.0
+F009,Dosa (Plain),south,True,breakfast,cereals,168,4.0,27.0,0.5,1.0,5.0,1.0,200,90,15,69,0.0,False,False,True,False,0.8,1.0,1.0,1.0
+F010,Uttapam,south,True,breakfast,cereals,120,4.0,20.0,0.5,1.2,3.0,0.5,250,100,15,65,0.0,False,False,True,False,0.8,0.75,1.0,1.0
+F011,"Paratha (Plain, Whole Wheat)",north,True,breakfast/lunch,cereals,240,6.0,38.0,0.5,2.0,8.0,2.0,200,110,25,66,0.0,False,False,False,False,0.8,1.0,1.0,1.0
+F012,Oats (Cooked),pan-india,True,breakfast,cereals,150,5.5,27.0,0.5,2.5,2.5,0.4,2,166,50,55,0.1,False,False,False,False,1.0,1.0,1.0,1.0
+F013,Daliya (Broken Wheat Porridge),north,True,breakfast,cereals,140,4.5,28.0,0.5,2.8,1.0,0.2,3,150,45,41,0.0,False,False,False,False,1.0,1.0,1.0,1.0
+F014,Khichdi (Moong Dal + Rice),pan-india,True,lunch/dinner,cereals,130,5.0,22.0,1.0,2.0,3.0,0.7,200,180,25,45,0.1,False,False,False,False,1.0,1.0,1.0,1.0
+F015,Curd Rice,south,True,lunch/dinner,cereals,150,5.0,25.0,2.0,0.5,3.0,1.5,50,130,12,56,0.0,False,False,True,False,1.0,1.0,1.0,1.0
+F016,Litti Chokha,east,True,lunch/dinner,cereals,225,8.0,38.0,1.0,3.0,5.0,1.0,300,200,35,55,0.0,False,False,False,False,1.0,0.75,1.0,1.0
+F017,Tamarind Rice,south,True,lunch,cereals,155,3.0,30.0,2.0,1.5,3.0,0.5,400,150,20,65,0.0,False,False,False,False,0.8,0.75,1.0,1.0
+F018,Palak Dal,pan-india,True,lunch/dinner,pulses,100,7.0,14.0,1.0,4.0,2.0,0.3,50,400,55,22,0.1,False,False,False,False,1.0,1.0,1.0,1.0
+F019,Rajma (Cooked),north,True,lunch/dinner,pulses,127,8.7,22.0,0.5,6.5,0.5,0.1,2,403,45,28,0.1,False,False,False,False,1.0,1.0,1.0,1.0
+F020,Chana Masala,pan-india,True,lunch/dinner,pulses,164,8.9,27.0,1.5,7.6,2.5,0.3,300,291,48,31,0.1,False,False,False,False,1.0,0.9,1.0,1.0
+F021,Moong Dal (Yellow),pan-india,True,breakfast/lunch/dinner,pulses,105,7.5,18.0,1.0,4.0,0.5,0.1,2,270,48,25,0.1,False,False,False,False,1.0,1.0,1.0,1.0
+F022,Arhar Dal (Toor),pan-india,True,lunch/dinner,pulses,110,7.2,19.0,1.5,3.5,0.5,0.1,5,303,43,29,0.1,False,False,False,False,1.0,1.0,1.0,1.0
+F023,Urad Dal,pan-india,True,breakfast/lunch/dinner,pulses,116,8.2,18.0,1.0,3.8,1.5,0.4,2,252,55,30,0.1,False,False,False,False,1.0,1.0,1.0,1.0
+F024,Black Chana (Cooked),pan-india,True,breakfast/lunch/snack,pulses,164,8.9,27.0,1.5,7.6,2.5,0.3,24,291,48,28,0.1,False,False,False,False,1.0,1.0,1.0,1.0
+F025,Moong Sprouts,pan-india,True,breakfast/snack,pulses,30,3.0,5.9,0.5,1.8,0.2,0.0,6,149,21,25,0.1,False,False,False,False,1.0,1.0,1.0,1.0
+F026,Kala Chana Sprouts,pan-india,True,breakfast/snack,pulses,45,3.5,8.0,1.0,3.0,0.5,0.0,8,200,40,25,0.1,False,False,False,False,1.0,1.0,1.0,1.0
+F027,Sambar,south,True,breakfast/lunch/dinner,pulses,80,4.0,12.0,2.0,2.5,2.0,0.3,300,250,30,35,0.1,False,False,False,False,1.0,0.75,1.0,1.0
+F028,Soya Chunks (Cooked),pan-india,True,lunch/dinner,protein,160,52.0,10.0,0.5,4.0,0.5,0.1,20,2540,260,18,1.5,False,False,False,True,1.0,1.0,1.0,1.0
+F029,Paneer (100g),pan-india,True,breakfast/lunch/dinner,dairy,265,18.3,1.2,0.5,0.0,20.0,13.0,32,23,18,27,0.1,False,False,False,True,1.0,1.0,0.6,1.0
+F030,Dahi (Low Fat Curd),pan-india,True,breakfast/lunch/snack/dinner,dairy,61,3.5,4.7,4.5,0.0,1.5,1.0,46,141,11,36,0.0,False,False,True,False,1.0,1.0,1.0,1.0
+F031,Chaas (Buttermilk),pan-india,True,breakfast/lunch/snack,dairy,40,3.3,4.8,4.5,0.0,1.0,0.7,180,151,11,32,0.0,False,False,True,False,1.0,1.0,1.0,1.0
+F032,Milk Toned,pan-india,True,breakfast/snack/dinner,dairy,58,3.2,4.7,4.5,0.0,1.5,1.0,48,150,11,30,0.0,False,False,False,True,1.0,1.0,1.0,1.0
+F033,Turmeric Milk (Haldi Doodh),pan-india,True,dinner/snack,dairy,72,3.5,7.0,5.0,0.0,2.5,1.5,55,175,15,30,0.0,False,False,False,True,1.0,1.0,1.0,1.0
+F034,Mishti Doi,east,True,snack,dairy,110,4.0,18.0,16.0,0.0,2.5,1.5,70,180,15,55,0.0,False,False,True,False,0.7,1.0,1.0,1.0
+F035,Egg Boiled,pan-india,False,breakfast/lunch/dinner,protein,155,13.0,1.1,0.5,0.0,10.6,3.3,124,138,12,0,0.1,False,False,False,True,1.0,1.0,1.0,1.0
+F036,Chicken Breast (Grilled),pan-india,False,lunch/dinner,protein,165,31.0,0.0,0.0,0.0,3.6,1.0,74,256,29,0,0.3,False,False,False,True,1.0,1.0,1.0,1.0
+F037,Rohu Fish (Steamed),east,False,lunch/dinner,protein,97,16.7,0.0,0.0,0.0,3.0,1.0,68,310,25,0,0.8,False,False,False,True,1.0,1.0,1.0,1.0
+F038,Sardine (Fresh/Canned in Water),pan-india,False,lunch/dinner,protein,208,25.0,0.0,0.0,0.0,11.0,3.0,505,397,35,0,2.0,False,False,False,True,1.0,0.7,1.0,1.0
+F039,Lauki Sabzi (Bottle Gourd),pan-india,True,lunch/dinner,vegetables,17,0.6,3.4,1.5,0.5,0.0,0.0,2,150,11,15,0.0,False,False,False,False,1.0,1.0,1.0,1.0
+F040,Palak Sabzi (Spinach),pan-india,True,breakfast/lunch/dinner,vegetables,23,2.9,3.6,0.4,2.2,0.4,0.1,79,558,79,15,0.1,False,False,False,False,1.0,1.0,1.0,1.0
+F041,Methi Sabzi (Fenugreek),pan-india,True,breakfast/lunch/dinner,vegetables,49,4.4,6.0,0.5,4.3,0.7,0.1,67,770,191,25,0.1,False,False,False,False,1.0,1.0,1.0,1.0
+F042,Bhindi (Okra),pan-india,True,lunch/dinner,vegetables,33,1.9,7.5,1.5,3.2,0.2,0.0,7,299,57,20,0.1,False,False,False,False,1.0,1.0,1.0,1.0
+F043,Brinjal (Baingan),pan-india,True,lunch/dinner,vegetables,25,1.0,6.0,2.0,3.0,0.2,0.0,2,229,14,15,0.0,False,False,False,False,1.0,1.0,1.0,1.0
+F044,Tomato,pan-india,True,breakfast/lunch/dinner/snack,vegetables,18,0.9,3.9,2.6,1.2,0.2,0.0,5,237,11,30,0.0,False,False,False,False,1.0,1.0,1.0,1.0
+F045,Onion,pan-india,True,breakfast/lunch/dinner,vegetables,40,1.1,9.3,4.2,1.7,0.1,0.0,4,146,10,10,0.0,False,False,False,False,1.0,1.0,1.0,1.0
+F046,Karela (Bitter Gourd),pan-india,True,lunch/dinner,vegetables,17,1.0,3.7,1.5,2.8,0.2,0.0,5,296,17,15,0.0,False,False,False,False,1.0,1.0,1.0,1.0
+F047,Cucumber,pan-india,True,breakfast/lunch/snack,vegetables,16,0.7,3.6,1.7,0.5,0.1,0.0,2,147,13,15,0.0,False,False,False,False,1.0,1.0,1.0,1.0
+F048,Carrot,pan-india,True,breakfast/lunch/snack,vegetables,41,0.9,10.0,4.7,2.8,0.2,0.0,69,320,12,35,0.0,False,False,False,False,1.0,1.0,1.0,1.0
+F049,Beetroot,pan-india,True,breakfast/lunch/snack,vegetables,43,1.6,10.0,7.0,2.8,0.2,0.0,78,325,23,61,0.0,False,False,False,False,0.5,1.0,1.0,1.0
+F050,Cauliflower,pan-india,True,lunch/dinner,vegetables,25,1.9,5.0,1.9,2.0,0.3,0.1,30,299,15,15,0.0,False,False,False,False,1.0,1.0,1.0,1.0
+F051,Sarson ka Saag,north,True,lunch/dinner,vegetables,55,3.5,7.0,1.0,3.5,2.0,0.4,80,350,45,20,0.3,False,False,False,False,1.0,1.0,1.0,1.0
+F052,Moringa Leaves (Drumstick),south,True,lunch/dinner,vegetables,37,2.1,5.0,0.5,2.0,0.2,0.0,20,337,45,15,0.2,False,False,False,False,1.0,1.0,1.0,1.0
+F053,Green Peas,pan-india,True,breakfast/lunch/dinner,vegetables,81,5.4,14.0,5.7,5.1,0.4,0.1,5,244,33,48,0.1,False,False,False,False,0.9,1.0,1.0,1.0
+F054,Sweet Potato,pan-india,True,breakfast/snack,vegetables,86,1.6,20.0,4.2,3.0,0.1,0.0,55,337,25,61,0.0,False,False,False,False,0.8,1.0,1.0,1.0
+F055,Potato (Boiled),pan-india,True,lunch/dinner,vegetables,77,2.0,17.0,0.8,2.2,0.1,0.0,6,425,23,70,0.0,False,False,False,False,0.8,1.0,1.0,1.0
+F056,Rasam,south,True,lunch/dinner,vegetables,25,1.0,5.0,1.0,0.5,0.5,0.0,200,150,15,20,0.0,False,False,False,False,1.0,1.0,1.0,1.0
+F057,Green Chutney,pan-india,True,breakfast/lunch/snack/dinner,vegetables,40,1.5,6.0,1.0,2.0,1.0,0.0,200,150,20,15,0.1,False,False,False,False,1.0,1.0,1.0,1.0
+F058,Banana,pan-india,True,breakfast/snack,fruits,89,1.1,23.0,12.2,2.6,0.3,0.1,1,358,27,51,0.0,False,False,False,True,0.7,1.0,1.0,1.0
+F059,Guava,pan-india,True,snack/breakfast,fruits,68,2.6,14.0,9.0,5.4,0.9,0.3,2,417,22,12,0.1,False,False,False,False,0.9,1.0,1.0,1.0
+F060,Papaya,pan-india,True,breakfast/snack,fruits,43,0.5,11.0,7.8,1.7,0.3,0.1,8,182,21,59,0.0,False,False,False,False,0.5,1.0,1.0,1.0
+F061,Apple,pan-india,True,snack/breakfast,fruits,52,0.3,14.0,10.4,2.4,0.2,0.0,1,107,5,38,0.0,False,False,False,False,0.7,1.0,1.0,1.0
+F062,Orange,pan-india,True,snack/breakfast,fruits,47,0.9,12.0,9.4,2.4,0.1,0.0,0,181,10,40,0.0,False,False,False,False,0.7,1.0,1.0,1.0
+F063,Pomegranate,pan-india,True,snack/breakfast,fruits,83,1.7,19.0,13.7,4.0,1.2,0.1,3,236,12,35,0.0,False,False,False,False,0.7,1.0,1.0,1.0
+F064,Amla (Indian Gooseberry),pan-india,True,snack/breakfast,fruits,44,0.9,10.0,6.9,4.3,0.6,0.0,1,198,10,25,0.0,False,False,False,False,0.7,1.0,1.0,1.0
+F065,Akhrot (Walnuts),pan-india,True,snack/breakfast,nuts,654,15.2,14.0,2.6,6.7,65.0,6.0,2,441,158,15,9.1,False,False,False,False,1.0,1.0,1.0,1.0
+F066,Badam (Almonds),pan-india,True,snack/breakfast,nuts,579,21.2,22.0,4.4,12.5,49.9,3.8,1,733,270,15,0.0,False,False,False,False,1.0,1.0,1.0,1.0
+F067,Flaxseed (Alsi),pan-india,True,breakfast/snack/lunch/dinner,nuts,534,18.3,29.0,1.6,27.3,42.2,3.6,30,813,392,35,22.8,False,False,False,False,1.0,1.0,1.0,1.0
+F068,Chia Seeds,pan-india,True,breakfast/snack,nuts,486,16.5,42.0,0.0,34.4,30.7,3.3,16,407,335,1,17.8,False,False,False,False,1.0,1.0,1.0,1.0
+F069,Pumpkin Seeds,pan-india,True,snack,nuts,559,30.2,11.0,1.4,6.0,49.1,8.7,7,919,592,25,0.1,False,False,False,True,1.0,1.0,0.9,1.0
+F070,Til (Sesame Seeds),pan-india,True,snack/breakfast,nuts,573,17.7,23.0,0.3,11.8,50.0,7.0,11,468,351,35,0.4,False,False,False,False,1.0,1.0,0.9,1.0
+F071,Makhana (Fox Nuts),pan-india,True,snack,nuts,347,9.7,74.7,0.0,0.5,0.1,0.0,1,500,67,55,0.0,False,False,False,False,1.0,1.0,1.0,1.0
+F072,Coconut Chutney,south,True,breakfast/snack,fats,150,2.0,8.0,3.0,3.0,12.0,10.0,150,200,30,40,0.0,False,False,False,False,1.0,1.0,0.6,1.0
+F073,Mustard Oil,pan-india,True,breakfast/lunch/dinner,fats,884,0.0,0.0,0.0,0.0,99.9,11.6,0,0,0,0,5.9,False,False,False,False,1.0,1.0,0.9,1.0
+F074,Coconut Oil,south,True,breakfast/lunch/dinner,fats,862,0.0,0.0,0.0,0.0,100.0,82.0,0,0,0,0,0.0,False,False,False,False,1.0,1.0,0.6,1.0
+F075,Ghee,pan-india,True,breakfast/lunch/dinner,fats,900,0.0,0.0,0.0,0.0,99.5,65.0,0,0,0,0,0.5,False,False,False,False,1.0,1.0,0.6,1.0
+F076,Olive Oil,pan-india,True,breakfast/lunch/dinner,fats,884,0.0,0.0,0.0,0.0,100.0,14.0,2,1,0,0,0.8,False,False,False,False,1.0,1.0,0.9,1.0
+F077,Jaggery (Gur),pan-india,True,snack,fats,383,0.4,98.0,70.0,0.0,0.1,0.0,19,1050,70,84,0.0,False,False,False,False,0.3,1.0,1.0,1.0
+F078,"Ragi (Finger Millet, Raw)",south,True,breakfast/snack,cereals,336,7.3,72.0,1.5,3.6,1.5,0.3,11,408,137,68,0.1,True,False,False,False,0.95,1.0,1.0,1.0
+F079,Cabbage (Stir-fried),pan-india,True,lunch/dinner,vegetables,30,1.5,6.5,2.5,2.5,0.5,0.1,18,170,12,10,0.0,False,False,False,False,1.0,1.0,1.0,1.0
+F080,Kokum,west,True,lunch/dinner/snack,fruits,50,1.5,11.0,4.0,2.0,0.8,0.1,5,200,25,30,0.0,False,False,False,False,1.0,1.0,1.0,1.0

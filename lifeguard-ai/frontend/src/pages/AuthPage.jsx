@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   updateProfile,
-  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
 } from 'firebase/auth'
 import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore'
 import { auth, db, googleProvider } from '../firebase'
@@ -41,14 +42,26 @@ export default function AuthPage({ onBack }) {
 
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }))
 
+  // Handle the result when returning from Google redirect
+  useEffect(() => {
+    setGoogleLoading(true)
+    getRedirectResult(auth)
+      .then(async (result) => {
+        if (result?.user) {
+          await ensureFirestoreUser(result.user)
+        }
+      })
+      .catch((err) => {
+        if (err.code !== 'auth/no-current-user') {
+          setError(err.message)
+        }
+      })
+      .finally(() => setGoogleLoading(false))
+  }, [])
+
   const handleGoogle = async () => {
-    setError(''); setGoogleLoading(true)
-    try {
-      const result = await signInWithPopup(auth, googleProvider)
-      await ensureFirestoreUser(result.user)
-    } catch (err) {
-      setError(err.code === 'auth/popup-closed-by-user' ? 'Sign-in cancelled.' : err.message)
-    } finally { setGoogleLoading(false) }
+    setError('')
+    await signInWithRedirect(auth, googleProvider)
   }
 
   const handleSubmit = async (e) => {

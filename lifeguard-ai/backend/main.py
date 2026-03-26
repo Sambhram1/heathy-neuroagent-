@@ -3,15 +3,51 @@ import os
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 import uvicorn
+from typing import Optional, List
+from pydantic import BaseModel
 
 from models.schemas import ChatRequest, ChatResponse, RiskScores, MentalChatRequest, MentalChatResponse, AssessRequest, AssessResponse
 from agents.orchestrator import run_agent
 from agents.mental_chat import run_mental_chat
 from rag.knowledge_base import initialize_kb, get_document_count
+
+# ── IndianPlate AI ────────────────────────────────────────────────────────────
+_diet_engine = None
+
+def get_diet_engine():
+    global _diet_engine
+    if _diet_engine is None:
+        from indian_plate_ai.diet_engine import DietEngine
+        _diet_engine = DietEngine()
+    return _diet_engine
+
+
+class DietRiskScores(BaseModel):
+    diabetes: float = 0.0
+    hypertension: float = 0.0
+    cvd: float = 0.0
+    mental: float = 0.0
+
+
+class DietUserProfile(BaseModel):
+    age: int = 35
+    sex: str = "male"
+    calorie_target: Optional[int] = None
+    is_vegetarian: bool = True
+    region: str = "north"
+    allergies: List[str] = []
+    weight_kg: Optional[float] = None
+    height_cm: Optional[float] = None
+    activity_level: str = "sedentary"
+
+
+class DietPlanRequest(BaseModel):
+    risk_scores: DietRiskScores
+    user_profile: DietUserProfile
 
 # In-memory session store: session_id -> {messages: [], risk_scores, amplifiers, evidence, plan_ready, plan}
 sessions: dict = {}
@@ -212,7 +248,14 @@ async def mental_chat(request: MentalChatRequest):
         result = await run_mental_chat(messages)
     except Exception as e:
         print(f"[Error] Mental chat failed: {e}")
-        raise HTTPException(status_code=500, detail=f"Mental chat error: {str(e)}")
+        return MentalChatResponse(
+            message=(
+                "I'm having trouble connecting to the support model right now. "
+                "Please try again in a minute. If you need immediate support, "
+                "iCall: 9152987821, Vandrevala 24/7: 1860-2662-345."
+            ),
+            crisis_detected=False,
+        )
     return MentalChatResponse(
         message=result["message"],
         crisis_detected=result.get("crisis_detected", False),
@@ -227,6 +270,96 @@ async def reset_session(body: dict):
     if session_id in sessions:
         del sessions[session_id]
     return {"success": True}
+
+
+# ── IndianPlate AI endpoints ──────────────────────────────────────────────────
+
+@app.post("/api/diet-plan")
+async def diet_plan(request: DietPlanRequest):
+    """
+    Generate a personalized ICMR-compliant Indian thali meal plan.
+    Accepts LifeGuard risk scores and user profile, returns a full day plan.
+    """
+    try:
+        engine = get_diet_engine()
+        risk_scores = {
+            "diabetes":     request.risk_scores.diabetes,
+            "hypertension": request.risk_scores.hypertension,
+            "cvd":          request.risk_scores.cvd,
+            "mental":       request.risk_scores.mental,
+        }
+        user_profile = request.user_profile.model_dump()
+        plan = engine.generate_plan(risk_scores=risk_scores, user_profile=user_profile)
+        return plan
+    except Exception as e:
+        print(f"[IndianPlate AI] Diet plan error: {e}")
+        raise HTTPException(status_code=500, detail=f"Diet plan generation failed: {str(e)}")
+
+
+@app.get("/api/food-lookup")
+async def food_lookup(name: str = Query(..., description="Food name to search")):
+    """Return nutritional info and suitability scores for a food item."""
+    try:
+        engine = get_diet_engine()
+        results = engine._assembler.recommender.lookup(name)
+        if not results:
+            raise HTTPException(status_code=404, detail=f"No foods found matching '{name}'")
+        return {"query": name, "results": results, "count": len(results)}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/diet-health")
+async def diet_health():
+    """Health check for the IndianPlate AI subsystem."""
+    try:
+        engine = get_diet_engine()
+        total = engine._assembler.recommender.total_foods
+        ml_trained = engine.ml_model.is_trained
+        clusters = engine.ml_model.get_cluster_summary() if ml_trained else []
+        return {
+            "status": "ok",
+            "total_foods": total,
+            "ml_trained": ml_trained,
+            "clusters": clusters,
+            "engine": "IndianPlate AI v2.0 (KNN + KMeans)",
+        }
+    except Exception as e:
+        return {"status": "error", "detail": str(e)}
+
+
+@app.get("/api/food-explain")
+async def food_explain(food_id: str = Query(..., description="food_id e.g. F001")):
+    """
+    Return ML explainability for a food: cluster, nearest neighbors,
+    key nutrients, and suitability scores.
+    """
+    try:
+        engine = get_diet_engine()
+        result = engine.ml_model.explain_food(food_id)
+        if "error" in result:
+            raise HTTPException(status_code=404, detail=result["error"])
+        return result
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/ml-clusters")
+async def ml_clusters():
+    """Return all KMeans cluster summaries with representative foods."""
+    try:
+        engine = get_diet_engine()
+        return {
+            "clusters": engine.ml_model.get_cluster_summary(),
+            "n_clusters": 5,
+            "model": "KMeans (cosine-normalised 16-feature space)",
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 if __name__ == "__main__":
