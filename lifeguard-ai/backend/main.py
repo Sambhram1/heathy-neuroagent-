@@ -15,20 +15,44 @@ from rag.knowledge_base import initialize_kb, get_document_count
 
 # In-memory session store: session_id -> {messages: [], risk_scores, amplifiers, evidence, plan_ready, plan}
 sessions: dict = {}
+_kb_initialized = False
+
+
+def _running_on_vercel() -> bool:
+    return os.getenv("VERCEL") == "1" or bool(os.getenv("VERCEL_ENV"))
+
+
+def ensure_kb_initialized() -> int:
+    global _kb_initialized
+    if _kb_initialized:
+        return get_document_count()
+
+    try:
+        print("[Startup] Initializing Pinecone knowledge base...")
+        count = initialize_kb()
+        if count <= len([]):  # only run dataset ingestion when freshly seeded
+            try:
+                from rag.ingest_datasets import run_ingestion
+                run_ingestion()
+            except Exception as e:
+                print(f"[Startup] Dataset ingestion skipped: {e}")
+
+        _kb_initialized = True
+        count = get_document_count()
+        print(f"[Startup] Knowledge base ready with {count} vectors.")
+        return count
+    except Exception as e:
+        print(f"[Startup] Knowledge base initialization failed: {e}")
+        return 0
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    print("[Startup] Initializing Pinecone knowledge base...")
-    count = initialize_kb()
-    if count <= len([]):  # only run dataset ingestion when freshly seeded
-        try:
-            from rag.ingest_datasets import run_ingestion
-            run_ingestion()
-        except Exception as e:
-            print(f"[Startup] Dataset ingestion skipped: {e}")
-    count = get_document_count()
-    print(f"[Startup] Knowledge base ready with {count} vectors.")
+    if _running_on_vercel():
+        # Serverless cold starts can be strict; initialize lazily on first API hit.
+        print("[Startup] Vercel runtime detected. Deferring KB initialization.")
+    else:
+        ensure_kb_initialized()
     yield
     print("[Shutdown] LifeGuard AI shutting down.")
 
@@ -40,18 +64,44 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+
+def _clean_origin(value: str) -> str:
+    if not value:
+        return ""
+    return value.strip().strip('"').rstrip("/")
+
+
+vercel_url = _clean_origin(os.getenv("VERCEL_URL", ""))
+frontend_url = _clean_origin(os.getenv("FRONTEND_URL", ""))
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
-    allow_credentials=True,
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        *(
+            [f"https://{vercel_url}"]
+            if vercel_url
+            else []
+        ),
+        *(
+            [frontend_url]
+            if frontend_url
+            else []
+        ),
+    ],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
+    allow_origin_regex=r"https://.*\.vercel\.app",
 )
 
 
 @app.get("/api/health")
 async def health_check():
     try:
+        if not _kb_initialized:
+            ensure_kb_initialized()
         kb_count = get_document_count()
     except Exception:
         kb_count = 0
@@ -60,6 +110,9 @@ async def health_check():
 
 @app.post("/api/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest):
+    if not _kb_initialized:
+        ensure_kb_initialized()
+
     session_id = request.session_id
 
     # Initialize session if new
@@ -151,6 +204,9 @@ async def assess(req: AssessRequest):
 
 @app.post("/api/mental-chat", response_model=MentalChatResponse)
 async def mental_chat(request: MentalChatRequest):
+    if not _kb_initialized:
+        ensure_kb_initialized()
+
     messages = [{"role": m.role, "content": m.content} for m in request.messages]
     try:
         result = await run_mental_chat(messages)

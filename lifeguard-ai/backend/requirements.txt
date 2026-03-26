@@ -2,7 +2,6 @@ fastapi
 uvicorn[standard]
 openai
 pinecone
-sentence-transformers
 pydantic
 python-dotenv
 httpx

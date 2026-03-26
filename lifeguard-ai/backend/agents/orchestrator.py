@@ -169,7 +169,11 @@ def _execute_tool(tool_name: str, tool_input: dict) -> dict:
     elif tool_name == "retrieve_medical_evidence":
         query = tool_input.get("query", "")
         conditions = tool_input.get("conditions", None)
-        results = rag_search(query, n_results=4, conditions=conditions)
+        try:
+            results = rag_search(query, n_results=4, conditions=conditions)
+        except Exception as e:
+            print(f"[RAG] Retrieval failed: {e}")
+            results = []
         return {"evidence": results}
 
     elif tool_name == "calculate_psychosomatic_amplification":

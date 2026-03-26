@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
+import { apiUrl } from '../lib/apiBase'
 
 const WELCOME = {
   role: 'assistant',
@@ -86,7 +87,7 @@ export default function MentalHealthChat({ sessionId, userProfile, reportContext
           apiMessages = [{ role: 'user', content: `[CONTEXT] ${ctxParts.join(' ')}` }, { role: 'assistant', content: 'Context received.' }, ...apiMessages.slice(1)]
         }
       }
-      const res = await fetch('/api/mental-chat', {
+      const res = await fetch(apiUrl('/api/mental-chat'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: apiMessages, session_id: sessionId }),

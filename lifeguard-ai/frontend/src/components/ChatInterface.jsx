@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
+import { apiUrl } from '../lib/apiBase'
 
 function buildSystemContext(userProfile, reportContext) {
   if (!userProfile && !reportContext) return null
@@ -122,7 +123,7 @@ export default function ChatInterface({ sessionId, onAgentResponse, planReady, o
         ? [{ role: 'user', content: `[CONTEXT] ${profileCtx}` }, { role: 'assistant', content: 'Profile context received.' }, ...newMessages.slice(1)]
         : newMessages
 
-      const res = await fetch('/api/chat', {
+      const res = await fetch(apiUrl('/api/chat'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: apiMessages, session_id: sessionId }),

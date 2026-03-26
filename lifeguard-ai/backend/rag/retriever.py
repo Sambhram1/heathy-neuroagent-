@@ -3,14 +3,13 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from typing import List, Optional
-from rag.knowledge_base import get_index, _get_embedder
+from rag.knowledge_base import get_index, embed_query
 
 
 def search(query: str, n_results: int = 4, conditions: Optional[List[str]] = None) -> List[dict]:
-    embedder = _get_embedder()
     index = get_index()
 
-    query_vector = embedder.encode([query])[0].tolist()
+    query_vector = embed_query(query)
 
     # Build metadata filter for Pinecone
     pinecone_filter = None

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { apiUrl } from '../lib/apiBase'
 
 // ─── Question definitions ──────────────────────────────────────────────────
 const STEPS = [
@@ -394,7 +395,7 @@ export default function AssessmentForm({ onComplete }) {
       setError('')
       try {
         const payload = buildPayload(answers)
-        const res = await fetch('/api/assess', {
+        const res = await fetch(apiUrl('/api/assess'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),

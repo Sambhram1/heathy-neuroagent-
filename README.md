@@ -44,6 +44,38 @@ npm run dev
 
 Then open http://localhost:5173 in your browser.
 
+## Deploy To Vercel (Windows)
+
+This repo is configured to deploy frontend and backend as separate Vercel projects:
+
+- Frontend project root: `frontend/`
+- Backend project root: `backend/` (FastAPI via `backend/api/index.py`)
+
+### 1. Required backend environment variables
+
+Set these in the backend Vercel project settings:
+
+- `NVIDIA_API_KEY`
+- `PINECONE_API_KEY`
+- `PINECONE_INDEX_NAME`
+- `FRONTEND_URL` (your deployed frontend URL, e.g. `https://your-app.vercel.app`)
+
+### 2. Frontend API base URL
+
+Set this in the frontend Vercel project settings:
+
+- `VITE_API_BASE_URL` (your deployed backend URL, e.g. `https://lifeguard-ai-backend.vercel.app`)
+
+### 3. Deploy from PowerShell
+
+From repo root:
+
+```powershell
+.\deploy-vercel-windows.ps1 -Prod
+```
+
+This script deploys backend first and then frontend.
+
 ## API Endpoints
 
 | Method | Path | Description |

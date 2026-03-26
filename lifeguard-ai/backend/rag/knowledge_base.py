@@ -2,8 +2,11 @@ import os
 import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+import hashlib
+import math
+import re
+
 from pinecone import Pinecone, ServerlessSpec
-from sentence_transformers import SentenceTransformer
 from config import PINECONE_API_KEY, PINECONE_INDEX_NAME
 from rag.seed_data import MEDICAL_KNOWLEDGE
 
@@ -11,15 +14,35 @@ EMBEDDING_DIM = 384  # all-MiniLM-L6-v2 output dimension
 
 _pc = None
 _index = None
-_embedder = None
 
 
-def _get_embedder() -> SentenceTransformer:
-    global _embedder
-    if _embedder is None:
-        print("[KB] Loading sentence-transformers model (all-MiniLM-L6-v2)...")
-        _embedder = SentenceTransformer("all-MiniLM-L6-v2")
-    return _embedder
+def _tokenize(text: str) -> list:
+    return re.findall(r"[a-z0-9]+", (text or "").lower())
+
+
+def _hash_embed_text(text: str) -> list:
+    vec = [0.0] * EMBEDDING_DIM
+    tokens = _tokenize(text)
+    if not tokens:
+        return vec
+
+    for token in tokens:
+        digest = hashlib.sha256(token.encode("utf-8")).digest()
+        for i in range(0, len(digest), 2):
+            idx = digest[i] % EMBEDDING_DIM
+            sign = 1.0 if (digest[i + 1] % 2 == 0) else -1.0
+            vec[idx] += sign
+
+    norm = math.sqrt(sum(v * v for v in vec)) or 1.0
+    return [v / norm for v in vec]
+
+
+def embed_texts(texts: list) -> list:
+    return [_hash_embed_text(text) for text in texts]
+
+
+def embed_query(text: str) -> list:
+    return _hash_embed_text(text)
 
 
 def _get_index():
@@ -54,10 +77,8 @@ def initialize_kb() -> int:
     # Seed medical guidelines if index is brand new
     if total == 0:
         print(f"[KB] Seeding Pinecone with {len(MEDICAL_KNOWLEDGE)} medical knowledge chunks...")
-        embedder = _get_embedder()
-
         texts = [item["text"] for item in MEDICAL_KNOWLEDGE]
-        vectors = embedder.encode(texts, show_progress_bar=True).tolist()
+        vectors = embed_texts(texts)
 
         upsert_data = [
             {
@@ -68,6 +89,7 @@ def initialize_kb() -> int:
                     "source": MEDICAL_KNOWLEDGE[i]["source"],
                     "condition": MEDICAL_KNOWLEDGE[i]["condition"],
                     "dataset": "seed_data",
+                    "embedding_model": "hash-v1",
                 },
             }
             for i in range(len(MEDICAL_KNOWLEDGE))
