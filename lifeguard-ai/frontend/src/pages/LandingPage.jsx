@@ -182,20 +182,20 @@ export default function LandingPage({ onGetStarted }) {
 
         <div className="hidden lg:flex items-center gap-8">
           {['Neural Core', 'Risk Protocol', 'Evidence Base'].map(item => (
-            <a key={item} href="#" className="text-[10px] font-mono uppercase tracking-[0.2em] text-white/35 hover:text-[#E5E5E5] transition-colors">
+            <a key={item} href="#" className="text-[11px] font-mono uppercase tracking-[0.2em] text-white/35 hover:text-[#E5E5E5] transition-colors">
               {item}
             </a>
           ))}
         </div>
 
         <div className="flex items-center gap-4">
-          <div className="hidden sm:flex items-center gap-1.5 text-[9px] font-mono uppercase tracking-widest text-[#E5E5E5]/60">
+          <div className="hidden sm:flex items-center gap-1.5 text-[11px] font-mono uppercase tracking-widest text-[#E5E5E5]/60">
             <span className="w-1.5 h-1.5 rounded-full bg-[#E5E5E5] animate-pulse" />
             System Online
           </div>
           <button
             onClick={onGetStarted}
-            className="text-[10px] font-mono uppercase tracking-[0.15em] px-5 py-2 rounded-full border border-[#E5E5E5]/25 text-white hover:bg-[#E5E5E5] hover:border-[#E5E5E5] hover:text-[#0B0B0B] transition-all bg-[#E5E5E5]/5 font-medium"
+            className="text-[11px] font-mono uppercase tracking-[0.15em] px-5 py-2 rounded-full border border-[#E5E5E5]/25 text-white hover:bg-[#E5E5E5] hover:border-[#E5E5E5] hover:text-[#0B0B0B] transition-all bg-[#E5E5E5]/5 font-medium"
           >
             Access Beta
           </button>
@@ -211,7 +211,7 @@ export default function LandingPage({ onGetStarted }) {
           {/* Status bar */}
           <div className="flex items-center gap-2.5 mb-10 self-start">
             <div className="h-px w-8 bg-[#E5E5E5]/50" />
-            <span className="text-[9px] font-mono uppercase tracking-[0.3em] text-[#E5E5E5]/80">V.2.0.4 — Agentic Core</span>
+            <span className="text-[11px] font-mono uppercase tracking-[0.3em] text-[#E5E5E5]/80">V.2.0.4 — Agentic Core</span>
             <div className="h-px w-8 bg-[#E5E5E5]/50" />
           </div>
 
@@ -236,12 +236,12 @@ export default function LandingPage({ onGetStarted }) {
           <div className="flex flex-col sm:flex-row gap-3 mb-14">
             <button
               onClick={onGetStarted}
-              className="flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-2xl bg-[#E5E5E5] text-[#0B0B0B] text-[11px] font-mono uppercase tracking-[0.2em] font-bold hover:bg-[#BFBFBF] transition-all hover:shadow-[0_0_45px_rgba(229,229,229,0.4)] active:scale-[0.98]"
+              className="flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-2xl bg-[#E5E5E5] text-[#0B0B0B] text-[12px] font-mono uppercase tracking-[0.2em] font-bold hover:bg-[#BFBFBF] transition-all hover:shadow-[0_0_45px_rgba(229,229,229,0.4)] active:scale-[0.98]"
             >
               <span className="w-1.5 h-1.5 rounded-full bg-[#0B0B0B]/40" />
               Begin Diagnostic
             </button>
-            <button className="flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl border border-white/10 text-white/50 text-[11px] font-mono uppercase tracking-[0.2em] hover:border-white/25 hover:text-white/80 transition-all">
+            <button className="flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl border border-white/10 text-white/50 text-[12px] font-mono uppercase tracking-[0.2em] hover:border-white/25 hover:text-white/80 transition-all">
               Clinical Specs →
             </button>
           </div>
@@ -251,7 +251,7 @@ export default function LandingPage({ onGetStarted }) {
             {[['0.97', 'Precision Score'], ['3', 'Disease Models'], ['REAL-TIME', 'Response']].map(([val, lbl]) => (
               <div key={lbl} className="group cursor-default">
                 <p className="text-[22px] font-light font-mono text-white group-hover:text-[#E5E5E5] transition-colors duration-400">{val}</p>
-                <p className="text-[8px] font-mono uppercase tracking-[0.3em] text-white/25 mt-1">{lbl}</p>
+                <p className="text-[9px] font-mono uppercase tracking-[0.3em] text-white/25 mt-1">{lbl}</p>
               </div>
             ))}
           </div>
@@ -297,7 +297,7 @@ export default function LandingPage({ onGetStarted }) {
                 <div className="w-1.5 h-1.5 rounded-full bg-[#E5E5E5]/50" />
               </div>
               <div className="bg-[rgba(229,229,229,0.06)] border border-[#E5E5E5]/20 rounded-xl px-3 py-2 backdrop-blur-md whitespace-nowrap">
-                <p className="text-[8px] font-mono text-[#E5E5E5]/80 uppercase tracking-widest">Neural Flux</p>
+                <p className="text-[9px] font-mono text-[#E5E5E5]/80 uppercase tracking-widest">Neural Flux</p>
                 <p className="text-[12px] font-mono text-white mt-0.5">{LIVE_METRICS[tick % LIVE_METRICS.length]}</p>
               </div>
             </div>
@@ -305,7 +305,7 @@ export default function LandingPage({ onGetStarted }) {
             {/* Floating label: bottom left */}
             <div className="absolute -bottom-10 left-0 sm:-left-10" style={{ animation: 'brain-float 8s ease-in-out infinite', animationDelay: '3s' }}>
               <div className="bg-[rgba(229,229,229,0.06)] border border-[#E5E5E5]/20 rounded-xl px-3 py-2 backdrop-blur-md whitespace-nowrap">
-                <p className="text-[8px] font-mono text-[#E5E5E5]/80 uppercase tracking-widest">Risk State</p>
+                <p className="text-[9px] font-mono text-[#E5E5E5]/80 uppercase tracking-widest">Risk State</p>
                 <p className="text-[12px] font-mono text-white mt-0.5">MONITORING</p>
               </div>
             </div>
@@ -325,16 +325,16 @@ export default function LandingPage({ onGetStarted }) {
 
         {/* RIGHT: Conditions panel */}
         <div className="hidden xl:flex flex-col justify-center px-10 border-l border-white/[0.05] min-w-[230px] py-16">
-          <p className="text-[9px] font-mono uppercase tracking-[0.3em] text-white/25 mb-6">Disease Protocols</p>
+          <p className="text-[11px] font-mono uppercase tracking-[0.3em] text-white/25 mb-6">Disease Protocols</p>
           <div className="space-y-5">
             {CONDITIONS.map((c) => (
               <div key={c.code} className="group cursor-default">
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-[8px] font-mono text-[#E5E5E5]/50 tracking-widest">{c.code}</span>
+                  <span className="text-[9px] font-mono text-[#E5E5E5]/50 tracking-widest">{c.code}</span>
                   <div className="flex-1 h-px bg-white/[0.05] group-hover:bg-[#E5E5E5]/20 transition-colors" />
                 </div>
-                <p className="text-[10px] font-mono uppercase tracking-[0.15em] text-white/55 group-hover:text-white transition-colors">{c.name}</p>
-                <p className="text-[9px] text-white/22 tracking-wide mt-0.5">{c.sub}</p>
+                <p className="text-[11px] font-mono uppercase tracking-[0.15em] text-white/55 group-hover:text-white transition-colors">{c.name}</p>
+                <p className="text-[11px] text-white/22 tracking-wide mt-0.5">{c.sub}</p>
               </div>
             ))}
           </div>
@@ -351,7 +351,7 @@ export default function LandingPage({ onGetStarted }) {
                 </svg>
               </div>
               <div className="text-left">
-                <p className="text-[8px] font-mono uppercase tracking-[0.2em] text-white/25">Get Started</p>
+                <p className="text-[9px] font-mono uppercase tracking-[0.2em] text-white/25">Get Started</p>
                 <p className="text-[12px] text-white font-medium tracking-tight">Start Diagnostic</p>
               </div>
             </button>
@@ -364,8 +364,8 @@ export default function LandingPage({ onGetStarted }) {
         <div className="flex gap-10 whitespace-nowrap" style={{ animation: 'marquee 28s linear infinite' }}>
           {[...CONDITIONS, ...CONDITIONS, ...CONDITIONS].map((c, i) => (
             <div key={i} className="flex items-center gap-5 flex-shrink-0">
-              <span className="text-[8px] font-mono text-[#E5E5E5]/40 tracking-widest">{c.code}</span>
-              <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-white/18">{c.name}</span>
+              <span className="text-[9px] font-mono text-[#E5E5E5]/40 tracking-widest">{c.code}</span>
+              <span className="text-[11px] font-mono uppercase tracking-[0.2em] text-white/18">{c.name}</span>
               <span className="text-white/10 text-lg">·</span>
             </div>
           ))}
@@ -379,14 +379,14 @@ export default function LandingPage({ onGetStarted }) {
             <div>
               <div className="flex items-center gap-3 mb-4">
                 <div className="h-px w-8 bg-[#E5E5E5]/45" />
-                <span className="text-[9px] font-mono uppercase tracking-[0.3em] text-[#E5E5E5]/65">Core Capabilities</span>
+                <span className="text-[11px] font-mono uppercase tracking-[0.3em] text-[#E5E5E5]/65">Core Capabilities</span>
               </div>
               <h2 className="text-[clamp(28px,4vw,52px)] font-extralight leading-tight tracking-tight text-white">
                 Built for prevention,<br />
                 <span className="text-white/35">powered by evidence.</span>
               </h2>
             </div>
-            <p className="text-[10px] font-mono text-white/28 max-w-xs leading-[1.9] lg:text-right">
+            <p className="text-[11px] font-mono text-white/28 max-w-xs leading-[1.9] lg:text-right">
               Each model is calibrated on clinical datasets spanning 100,000+ patient records with South Asian population adjustments.
             </p>
           </div>
@@ -395,11 +395,11 @@ export default function LandingPage({ onGetStarted }) {
             {FEATURES.map((f) => (
               <div key={f.num} className="bg-[#0B0B0B] p-8 hover:bg-[rgba(229,229,229,0.025)] transition-colors group cursor-default">
                 <div className="flex items-center gap-3 mb-6">
-                  <span className="text-[8px] font-mono text-[#E5E5E5]/55 border border-[#E5E5E5]/18 px-2 py-0.5 rounded tracking-widest">{f.num}</span>
+                  <span className="text-[9px] font-mono text-[#E5E5E5]/55 border border-[#E5E5E5]/18 px-2 py-0.5 rounded tracking-widest">{f.num}</span>
                   <div className="flex-1 h-px bg-white/[0.05]" />
                 </div>
                 <h3 className="text-[13px] font-medium text-white mb-3 tracking-wide group-hover:text-[#E5E5E5] transition-colors">{f.title}</h3>
-                <p className="text-[11px] text-white/32 leading-relaxed tracking-wide">{f.desc}</p>
+                <p className="text-[12px] text-white/32 leading-relaxed tracking-wide">{f.desc}</p>
               </div>
             ))}
           </div>
@@ -428,7 +428,7 @@ export default function LandingPage({ onGetStarted }) {
             <div className="relative z-10 text-center">
               <div className="inline-flex items-center gap-2 mb-6">
                 <div className="h-px w-5 bg-[#E5E5E5]/35" />
-                <span className="text-[9px] font-mono uppercase tracking-[0.3em] text-[#E5E5E5]/55">Begin Assessment</span>
+                <span className="text-[11px] font-mono uppercase tracking-[0.3em] text-[#E5E5E5]/55">Begin Assessment</span>
                 <div className="h-px w-5 bg-[#E5E5E5]/35" />
               </div>
               <h2 className="text-[clamp(28px,4vw,52px)] font-extralight tracking-tight text-white mb-4 leading-tight">
@@ -439,7 +439,7 @@ export default function LandingPage({ onGetStarted }) {
               </p>
               <button
                 onClick={onGetStarted}
-                className="inline-flex items-center gap-3 px-10 py-4 rounded-2xl bg-[#E5E5E5] text-[#0B0B0B] text-[11px] font-mono uppercase tracking-[0.2em] font-bold hover:bg-[#BFBFBF] transition-all hover:shadow-[0_0_50px_rgba(229,229,229,0.35)] active:scale-[0.98]"
+                className="inline-flex items-center gap-3 px-10 py-4 rounded-2xl bg-[#E5E5E5] text-[#0B0B0B] text-[12px] font-mono uppercase tracking-[0.2em] font-bold hover:bg-[#BFBFBF] transition-all hover:shadow-[0_0_50px_rgba(229,229,229,0.35)] active:scale-[0.98]"
               >
                 <span className="w-1.5 h-1.5 rounded-full bg-[#0B0B0B]/40" />
                 Access Secure Portal
@@ -453,9 +453,9 @@ export default function LandingPage({ onGetStarted }) {
       <footer className="px-6 lg:px-12 py-5 border-t border-white/[0.05] flex flex-col sm:flex-row items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           <span className="w-1.5 h-1.5 rounded-full bg-[#E5E5E5]/45" />
-          <span className="text-[9px] font-mono text-white/22 uppercase tracking-[0.2em]">LifeGuard AI © 2026</span>
+          <span className="text-[11px] font-mono text-white/22 uppercase tracking-[0.2em]">LifeGuard AI © 2026</span>
         </div>
-        <span className="text-[9px] font-mono text-white/18 uppercase tracking-[0.15em]">Preventive Intelligence — Not Medical Advice</span>
+        <span className="text-[11px] font-mono text-white/18 uppercase tracking-[0.15em]">Preventive Intelligence — Not Medical Advice</span>
       </footer>
     </div>
   )

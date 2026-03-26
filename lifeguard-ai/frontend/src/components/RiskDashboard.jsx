@@ -66,7 +66,7 @@ function GaugeChart({ label, score, icon }) {
     <div className="glass-card p-5 flex flex-col items-center gap-3 hover:border-[rgba(255,255,255,0.2)] transition-all group overflow-hidden relative">
       <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 blur-3xl rounded-full" />
       
-      <p className="text-[10px] font-medium text-text-muted uppercase tracking-[0.2em] w-full text-left">{label}</p>
+      <p className="text-[11px] font-medium text-text-muted uppercase tracking-[0.2em] w-full text-left">{label}</p>
       
       <div className="relative w-32 h-32 my-2">
         <svg
@@ -107,16 +107,16 @@ function GaugeChart({ label, score, icon }) {
             {score !== null && score !== undefined ? Math.round(animated) : '—'}
           </span>
           {score !== null && score !== undefined && (
-            <span className="text-[9px] text-text-muted font-mono tracking-widest mt-1">/ 100</span>
+            <span className="text-[11px] text-text-muted font-mono tracking-widest mt-1">/ 100</span>
           )}
         </div>
       </div>
       
       <div className="text-center w-full flex items-center justify-between border-t border-[rgba(255,255,255,0.05)] pt-3">
-        <p className="text-[10px] text-text-muted tracking-widest font-mono flex items-center gap-2">
+        <p className="text-[11px] text-text-muted tracking-widest font-mono flex items-center gap-2">
           <span className="opacity-60">{icon}</span>
         </p>
-        <p className={`text-[10px] uppercase font-bold tracking-widest ${label_color}`}>{label_text}</p>
+        <p className={`text-[11px] uppercase font-bold tracking-widest ${label_color}`}>{label_text}</p>
       </div>
     </div>
   )
@@ -146,7 +146,7 @@ function OverallRiskBadge({ score }) {
       <div className="relative z-10">
         <div className="flex items-center gap-2 mb-2">
            <span className="w-1.5 h-1.5 rounded-full bg-accent-500 glow-anim" />
-           <p className="text-[10px] text-text-muted uppercase tracking-[0.2em] font-mono">System Risk Score</p>
+           <p className="text-[11px] text-text-muted uppercase tracking-[0.2em] font-mono">System Risk Score</p>
         </div>
         <p className="text-xs text-text-muted max-w-sm leading-relaxed tracking-wide">
           Weighted biometric composite factoring Diabetology, Hypertension, Cardiovascular status, and Cognitive load.
@@ -161,7 +161,7 @@ function OverallRiskBadge({ score }) {
         </div>
         <div className="flex items-center gap-2 mt-2 px-3 py-1 rounded-full border border-[rgba(255,255,255,0.05)] bg-[rgba(255,255,255,0.02)]">
           <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: color }} />
-          <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color }}>
+          <p className="text-[11px] font-bold uppercase tracking-widest" style={{ color }}>
             {score !== null ? label : 'STANDBY'}
           </p>
         </div>
@@ -199,8 +199,8 @@ export default function RiskDashboard({ riskScores, amplifiers }) {
       {amplifiers && amplifiers.length > 0 && (
         <div className="space-y-3 pt-4 border-t border-[rgba(255,255,255,0.05)]">
           <div className="flex items-center gap-3 mb-2">
-            <span className="text-[10px] font-mono text-accent-500 bg-accent-500/10 px-2 py-0.5 rounded border border-accent-500/20">02</span>
-            <p className="text-[10px] font-medium text-text-muted uppercase tracking-[0.2em]">
+            <span className="text-[11px] font-mono text-accent-500 bg-accent-500/10 px-2 py-0.5 rounded border border-accent-500/20">02</span>
+            <p className="text-[11px] font-medium text-text-muted uppercase tracking-[0.2em]">
               Somatic Amplifiers Detected
             </p>
           </div>
@@ -225,7 +225,7 @@ export default function RiskDashboard({ riskScores, amplifiers }) {
 
       {/* Footer Legal */}
       <div className="pt-8 text-center border-t border-[rgba(255,255,255,0.03)] opacity-50">
-        <p className="text-[9px] text-text-muted font-mono uppercase tracking-widest leading-loose">
+        <p className="text-[11px] text-text-muted font-mono uppercase tracking-widest leading-loose">
            PROBABILISTIC MODEL. NON-DIAGNOSTIC.<br/>
            CONSULT A LICENSED CLINICIAN FOR FORMAL EVALUATION.
          </p>

@@ -9,18 +9,18 @@ export default function EvidenceCard({ source, text, condition, relevance_score 
 
   return (
     <div
-      className="rounded-lg p-4 border animate-fade-in text-[10px] uppercase tracking-widest font-mono"
+      className="rounded-lg p-4 border animate-fade-in text-[11px] uppercase tracking-widest font-mono"
       style={{ background: c.bg, borderColor: c.border }}
     >
       <div className="flex items-start justify-between gap-2 mb-3">
         <span
-          className="inline-flex px-2 py-0.5 rounded text-[9px] font-bold tracking-widest flex-shrink-0"
+          className="inline-flex px-2 py-0.5 rounded text-[11px] font-bold tracking-widest flex-shrink-0"
           style={{ color: c.color, background: `${c.color}20` }}
         >
           {c.label}
         </span>
         {relevance_score !== undefined && (
-          <span className="text-[9px] text-text-muted flex-shrink-0 flex items-center gap-1.5" style={{ color: c.color }}>
+          <span className="text-[11px] text-text-muted flex-shrink-0 flex items-center gap-1.5" style={{ color: c.color }}>
             <span className="w-1 h-1 rounded-full" style={{ background: c.color }} />
             {relevance_score}% MATCH
           </span>

@@ -27,7 +27,7 @@ export default function App() {
       <div className="h-screen w-screen bg-[#0B0B0B] flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <div className="w-4 h-4 border-2 border-[#E5E5E5] border-t-transparent rounded-full animate-spin" />
-          <p className="text-[9px] font-mono uppercase tracking-widest text-white/30">Initializing…</p>
+          <p className="text-[11px] font-mono uppercase tracking-widest text-white/30">Initializing…</p>
         </div>
       </div>
     )

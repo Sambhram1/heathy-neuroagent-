@@ -149,10 +149,10 @@ export default function ChatInterface({ sessionId, onAgentResponse, planReady, o
   return (
     <div className="flex flex-col h-full bg-[rgba(11,11,11,0.5)]">
       <div className="flex-shrink-0 px-6 py-4 border-b border-[rgba(255,255,255,0.05)] bg-[rgba(255,255,255,0.01)] backdrop-blur-md">
-        <p className="text-[10px] text-text-muted font-mono uppercase tracking-[0.2em] flex items-center gap-3">
+        <p className="text-[11px] text-text-muted font-mono uppercase tracking-[0.2em] flex items-center gap-3">
           <span className="w-1.5 h-1.5 bg-accent-500 rounded-full glow-anim opacity-75" />
           DIAGNOSTIC CORE // <span className="text-text-primary">{sessionId.slice(0, 8).toUpperCase()}</span>
-          {userProfile && <span className="ml-auto text-[8px] text-accent-500/70 border border-accent-500/20 px-1.5 py-0.5 rounded">PROFILE LOADED</span>}
+          {userProfile && <span className="ml-auto text-[9px] text-accent-500/70 border border-accent-500/20 px-1.5 py-0.5 rounded">PROFILE LOADED</span>}
         </p>
       </div>
 
@@ -171,7 +171,7 @@ export default function ChatInterface({ sessionId, onAgentResponse, planReady, o
           </div>
           <button
             onClick={onViewPlan}
-            className="relative z-10 text-[10px] px-4 py-2 rounded border border-accent-500/50 bg-accent-500/10 text-accent-500 font-mono tracking-widest uppercase hover:bg-accent-500 hover:text-[#0B0B0B] transition-all"
+            className="relative z-10 text-[11px] px-4 py-2 rounded border border-accent-500/50 bg-accent-500/10 text-accent-500 font-mono tracking-widest uppercase hover:bg-accent-500 hover:text-[#0B0B0B] transition-all"
           >
             Access Data
           </button>
@@ -201,8 +201,8 @@ export default function ChatInterface({ sessionId, onAgentResponse, planReady, o
           </button>
         </div>
         <div className="flex justify-between items-center mt-3 px-2">
-          <p className="text-[9px] text-text-muted/40 font-mono uppercase tracking-widest">END-TO-END SECURED</p>
-          <p className="text-[9px] text-text-muted font-mono uppercase tracking-[0.2em] flex items-center gap-1.5">
+          <p className="text-[11px] text-text-muted/40 font-mono uppercase tracking-widest">END-TO-END SECURED</p>
+          <p className="text-[11px] text-text-muted font-mono uppercase tracking-[0.2em] flex items-center gap-1.5">
             <span className="w-1 h-1 bg-accent-500 rounded-full opacity-50" />
             SYS.ACTIVE
           </p>

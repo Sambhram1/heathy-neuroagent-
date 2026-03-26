@@ -50,7 +50,7 @@ export default function DiagnosisUpload({ onReportSaved, existingReport }) {
         <div className="absolute top-0 right-0 w-40 h-40 bg-accent-500/10 blur-[60px] pointer-events-none rounded-full" />
         <div className="relative z-10">
           <p className="text-[12px] uppercase tracking-[0.2em] font-medium text-text-primary mb-1">Diagnosis Report Upload</p>
-          <p className="text-[10px] text-text-muted tracking-widest uppercase font-mono">Optional · PDF or Image · Contextualises AI Responses</p>
+          <p className="text-[11px] text-text-muted tracking-widest uppercase font-mono">Optional · PDF or Image · Contextualises AI Responses</p>
         </div>
       </div>
 
@@ -63,15 +63,15 @@ export default function DiagnosisUpload({ onReportSaved, existingReport }) {
             </div>
             <div className="flex-1">
               <p className="text-xs text-text-primary tracking-wide mb-1">Report on File</p>
-              <p className="text-[10px] text-text-muted font-mono tracking-widest">{savedReport.filename}</p>
-              {savedReport.fileSize && <p className="text-[9px] text-text-muted/50 font-mono mt-0.5">{savedReport.fileSize} · {savedReport.fileType}</p>}
-              <p className="text-[10px] text-text-muted mt-2 leading-relaxed">
+              <p className="text-[11px] text-text-muted font-mono tracking-widest">{savedReport.filename}</p>
+              {savedReport.fileSize && <p className="text-[11px] text-text-muted/50 font-mono mt-0.5">{savedReport.fileSize} · {savedReport.fileType}</p>}
+              <p className="text-[11px] text-text-muted mt-2 leading-relaxed">
                 The AI diagnostic chatbot will reference this report in its analysis. Ask it questions like "What do my blood sugar levels mean?" or "Explain my lipid profile."
               </p>
             </div>
             <button
               onClick={() => { setStatus(null); setSavedReport(null); setFile(null); onReportSaved?.(null) }}
-              className="text-[9px] font-mono text-text-muted/40 hover:text-accent-500 transition-colors uppercase tracking-widest flex-shrink-0"
+              className="text-[11px] font-mono text-text-muted/40 hover:text-accent-500 transition-colors uppercase tracking-widest flex-shrink-0"
             >
               Remove
             </button>
@@ -101,7 +101,7 @@ export default function DiagnosisUpload({ onReportSaved, existingReport }) {
           </div>
 
           <p className="text-sm text-text-primary tracking-wide mb-2">{dragging ? 'Release to upload' : 'Drop your report here'}</p>
-          <p className="text-[10px] text-text-muted tracking-widest uppercase font-mono">PDF · JPEG · PNG · WebP</p>
+          <p className="text-[11px] text-text-muted tracking-widest uppercase font-mono">PDF · JPEG · PNG · WebP</p>
         </div>
       )}
 
@@ -113,7 +113,7 @@ export default function DiagnosisUpload({ onReportSaved, existingReport }) {
           </div>
           <div>
             <p className="text-xs text-text-primary tracking-wide">Processing report…</p>
-            <p className="text-[10px] text-text-muted font-mono mt-1">{file?.name}</p>
+            <p className="text-[11px] text-text-muted font-mono mt-1">{file?.name}</p>
           </div>
         </div>
       )}
@@ -127,8 +127,8 @@ export default function DiagnosisUpload({ onReportSaved, existingReport }) {
       {/* Notes / Key values */}
       {savedReport && (
         <div className="glass-card p-5 space-y-3">
-          <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-text-muted mb-3">Key Values (Optional)</p>
-          <p className="text-[11px] text-text-muted leading-relaxed mb-3">
+          <p className="text-[11px] font-mono uppercase tracking-[0.2em] text-text-muted mb-3">Key Values (Optional)</p>
+          <p className="text-[12px] text-text-muted leading-relaxed mb-3">
             Paste key findings from your report here so the AI can use them precisely (e.g. "HbA1c: 6.2%, Fasting glucose: 108 mg/dL, LDL: 142 mg/dL"):
           </p>
           <textarea
@@ -149,14 +149,14 @@ export default function DiagnosisUpload({ onReportSaved, existingReport }) {
           ['Doctor Notes', 'Discharge summaries, prescription records'],
         ].map(([title, desc]) => (
           <div key={title} className="glass-card p-4">
-            <p className="text-[10px] font-mono uppercase tracking-widest text-accent-500 mb-2">{title}</p>
-            <p className="text-[11px] text-text-muted leading-relaxed tracking-wide">{desc}</p>
+            <p className="text-[11px] font-mono uppercase tracking-widest text-accent-500 mb-2">{title}</p>
+            <p className="text-[12px] text-text-muted leading-relaxed tracking-wide">{desc}</p>
           </div>
         ))}
       </div>
 
       <div className="pt-4 text-center">
-        <p className="text-[9px] text-text-muted/60 font-mono uppercase tracking-widest">
+        <p className="text-[11px] text-text-muted/60 font-mono uppercase tracking-widest">
           REPORTS ARE PROCESSED LOCALLY. NOT TRANSMITTED TO EXTERNAL SERVERS.
         </p>
       </div>

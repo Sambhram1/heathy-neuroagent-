@@ -121,14 +121,14 @@ export default function DietPlan({ riskScores, userProfile }) {
         <div className="flex items-center justify-between relative z-10 flex-wrap gap-3">
           <div>
             <p className="text-[12px] uppercase tracking-[0.2em] font-medium text-text-primary mb-1">Nutritional Protocol</p>
-            <p className="text-[10px] text-text-muted tracking-widest uppercase font-mono">
+            <p className="text-[11px] text-text-muted tracking-widest uppercase font-mono">
               {riskScores ? 'Personalised for your risk profile' : 'ICMR Plate · India-Specific'}
             </p>
           </div>
           {topConditions.length > 0 && (
             <div className="flex gap-2 flex-wrap">
               {topConditions.map((c) => (
-                <span key={c} className="text-[9px] px-2 py-0.5 rounded font-mono tracking-widest uppercase"
+                <span key={c} className="text-[11px] px-2 py-0.5 rounded font-mono tracking-widest uppercase"
                   style={{ color: CONDITION_COLORS[c], background: `${CONDITION_COLORS[c]}15`, border: `1px solid ${CONDITION_COLORS[c]}25` }}>
                   {c === 'mental' ? 'Cognitive' : c.charAt(0).toUpperCase() + c.slice(1)}
                 </span>
@@ -141,7 +141,7 @@ export default function DietPlan({ riskScores, userProfile }) {
       {/* BMI note */}
       {bmiNote && (
         <div className="glass-card p-4 border-l-2 animate-fade-in" style={{ borderColor: bmiNote.color, background: `${bmiNote.color}05` }}>
-          <p className="text-[11px] text-text-muted leading-relaxed"><strong className="text-text-primary">Portion guidance:</strong> {bmiNote.text}</p>
+          <p className="text-[12px] text-text-muted leading-relaxed"><strong className="text-text-primary">Portion guidance:</strong> {bmiNote.text}</p>
         </div>
       )}
 
@@ -157,7 +157,7 @@ export default function DietPlan({ riskScores, userProfile }) {
                 : 'glass-card border-[rgba(255,255,255,0.06)] text-text-muted hover:text-text-primary hover:border-[rgba(255,255,255,0.15)]'
             }`}
           >
-            <p className="text-[9px] font-mono uppercase tracking-widest mb-1">{BASE_MEALS[m].time}</p>
+            <p className="text-[11px] font-mono uppercase tracking-widest mb-1">{BASE_MEALS[m].time}</p>
             <p className="text-xs font-medium tracking-wide">{BASE_MEALS[m].title}</p>
           </button>
         ))}
@@ -166,10 +166,10 @@ export default function DietPlan({ riskScores, userProfile }) {
       {/* Meal detail */}
       <div className="glass-card p-6 space-y-3 animate-fade-in">
         <div className="flex items-center gap-3 mb-4">
-          <span className="text-[10px] font-mono text-accent-500 bg-accent-500/10 px-2 py-0.5 rounded border border-accent-500/20 tracking-widest">{meal.time}</span>
+          <span className="text-[11px] font-mono text-accent-500 bg-accent-500/10 px-2 py-0.5 rounded border border-accent-500/20 tracking-widest">{meal.time}</span>
           <h3 className="text-sm font-medium text-text-primary tracking-wide">{meal.title}</h3>
           {riskScores && (
-            <span className="ml-auto text-[9px] font-mono text-text-muted/50 uppercase tracking-widest">
+            <span className="ml-auto text-[11px] font-mono text-text-muted/50 uppercase tracking-widest">
               {personalizedItems.length} items selected for you
             </span>
           )}
@@ -177,14 +177,14 @@ export default function DietPlan({ riskScores, userProfile }) {
         {personalizedItems.map((item, i) => (
           <div key={i} className="flex items-start gap-4 p-3 rounded-lg bg-[rgba(255,255,255,0.02)] border border-[rgba(255,255,255,0.05)] hover:border-[rgba(255,255,255,0.1)] transition-colors">
             <div className="w-6 h-6 rounded border border-[rgba(255,255,255,0.1)] flex items-center justify-center flex-shrink-0 mt-0.5">
-              <span className="text-[9px] font-mono text-text-muted">{String(i + 1).padStart(2, '0')}</span>
+              <span className="text-[11px] font-mono text-text-muted">{String(i + 1).padStart(2, '0')}</span>
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-baseline justify-between gap-3 mb-1">
                 <p className="text-xs text-text-primary tracking-wide">{item.name}</p>
-                <span className="text-[10px] font-mono text-accent-500 flex-shrink-0">{item.qty}</span>
+                <span className="text-[11px] font-mono text-accent-500 flex-shrink-0">{item.qty}</span>
               </div>
-              <p className="text-[10px] text-text-muted tracking-wide">{item.note}</p>
+              <p className="text-[11px] text-text-muted tracking-wide">{item.note}</p>
             </div>
           </div>
         ))}
@@ -193,10 +193,10 @@ export default function DietPlan({ riskScores, userProfile }) {
       {/* What to avoid */}
       {avoidsToShow.length > 0 && (
         <div className="glass-card p-5 bg-[rgba(229,229,229,0.02)] border-l-2 border-accent-500/30">
-          <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-accent-500 mb-3">Limit or Avoid — Your Profile</p>
+          <p className="text-[11px] font-mono uppercase tracking-[0.2em] text-accent-500 mb-3">Limit or Avoid — Your Profile</p>
           <div className="flex flex-wrap gap-2">
             {avoidsToShow.map((f) => (
-              <span key={f} className="text-[10px] px-3 py-1 rounded border border-accent-500/20 text-text-muted font-mono tracking-wide">{f}</span>
+              <span key={f} className="text-[11px] px-3 py-1 rounded border border-accent-500/20 text-text-muted font-mono tracking-wide">{f}</span>
             ))}
           </div>
         </div>
@@ -204,7 +204,7 @@ export default function DietPlan({ riskScores, userProfile }) {
 
       {/* Key supplements */}
       <div className="glass-card p-5">
-        <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-text-muted mb-4">Evidence-Backed Supplements</p>
+        <p className="text-[11px] font-mono uppercase tracking-[0.2em] text-text-muted mb-4">Evidence-Backed Supplements</p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {[
             { name: 'Vitamin D3', dose: '1000–2000 IU/day', note: 'Deficient in 70% of Indians — improves insulin sensitivity & immunity', show: true },
@@ -215,16 +215,16 @@ export default function DietPlan({ riskScores, userProfile }) {
             <div key={i} className="p-3 rounded-lg bg-[rgba(255,255,255,0.02)] border border-[rgba(255,255,255,0.06)]">
               <div className="flex items-baseline justify-between mb-1">
                 <p className="text-xs text-text-primary font-medium">{s.name}</p>
-                <span className="text-[9px] font-mono text-accent-500">{s.dose}</span>
+                <span className="text-[11px] font-mono text-accent-500">{s.dose}</span>
               </div>
-              <p className="text-[10px] text-text-muted leading-relaxed">{s.note}</p>
+              <p className="text-[11px] text-text-muted leading-relaxed">{s.note}</p>
             </div>
           ))}
         </div>
       </div>
 
       <div className="pt-4 text-center">
-        <p className="text-[9px] text-text-muted/60 font-mono uppercase tracking-widest">
+        <p className="text-[11px] text-text-muted/60 font-mono uppercase tracking-widest">
           DIETARY GUIDANCE ONLY. CONSULT A REGISTERED DIETITIAN FOR PERSONALISED MEDICAL NUTRITION THERAPY.
         </p>
       </div>

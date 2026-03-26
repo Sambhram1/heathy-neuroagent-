@@ -92,7 +92,7 @@ export default function AuthPage({ onBack }) {
       {/* Back */}
       <button
         onClick={onBack}
-        className="absolute top-6 left-6 z-10 flex items-center gap-2.5 text-[9px] font-mono uppercase tracking-[0.2em] text-white/30 hover:text-white transition-colors px-4 py-2 rounded-xl border border-white/[0.06] bg-white/[0.02] hover:border-white/[0.12]"
+        className="absolute top-6 left-6 z-10 flex items-center gap-2.5 text-[11px] font-mono uppercase tracking-[0.2em] text-white/30 hover:text-white transition-colors px-4 py-2 rounded-xl border border-white/[0.06] bg-white/[0.02] hover:border-white/[0.12]"
       >
         <span className="text-[#E5E5E5]">←</span> Return
       </button>
@@ -115,7 +115,7 @@ export default function AuthPage({ onBack }) {
         <h2 className="text-[22px] font-extralight tracking-tight mb-1.5 relative z-10">
           {mode === 'login' ? 'Authentication' : 'Initialisation'}
         </h2>
-        <p className="text-[10px] text-white/35 tracking-wide mb-7 border-l border-[#E5E5E5]/35 pl-3 relative z-10 leading-relaxed font-mono">
+        <p className="text-[11px] text-white/35 tracking-wide mb-7 border-l border-[#E5E5E5]/35 pl-3 relative z-10 leading-relaxed font-mono">
           {mode === 'login'
             ? 'Sign in to access your health dashboard.'
             : 'Create your profile to begin preventive analysis.'}
@@ -137,7 +137,7 @@ export default function AuthPage({ onBack }) {
         {/* Divider */}
         <div className="relative z-10 flex items-center gap-3 mb-5">
           <div className="flex-1 h-px bg-white/[0.06]" />
-          <span className="text-[9px] font-mono uppercase tracking-widest text-white/25">or</span>
+          <span className="text-[11px] font-mono uppercase tracking-widest text-white/25">or</span>
           <div className="flex-1 h-px bg-white/[0.06]" />
         </div>
 
@@ -145,7 +145,7 @@ export default function AuthPage({ onBack }) {
         <form onSubmit={handleSubmit} className="space-y-3.5 relative z-10">
           {mode === 'register' && (
             <div>
-              <label className="text-[8px] font-mono uppercase tracking-[0.2em] text-white/30 block mb-1.5">Name</label>
+              <label className="text-[9px] font-mono uppercase tracking-[0.2em] text-white/30 block mb-1.5">Name</label>
               <input
                 type="text" value={form.name} onChange={set('name')} placeholder="Your full name"
                 className="w-full bg-white/[0.02] border border-white/[0.07] rounded-xl px-4 py-3 text-[12px] text-white placeholder-white/20 outline-none focus:border-[#E5E5E5]/40 transition-all font-mono"
@@ -153,14 +153,14 @@ export default function AuthPage({ onBack }) {
             </div>
           )}
           <div>
-            <label className="text-[8px] font-mono uppercase tracking-[0.2em] text-white/30 block mb-1.5">Email</label>
+            <label className="text-[9px] font-mono uppercase tracking-[0.2em] text-white/30 block mb-1.5">Email</label>
             <input
               type="email" value={form.email} onChange={set('email')} placeholder="you@example.com"
               className="w-full bg-white/[0.02] border border-white/[0.07] rounded-xl px-4 py-3 text-[12px] text-white placeholder-white/20 outline-none focus:border-[#E5E5E5]/40 transition-all font-mono"
             />
           </div>
           <div>
-            <label className="text-[8px] font-mono uppercase tracking-[0.2em] text-white/30 block mb-1.5">Password</label>
+            <label className="text-[9px] font-mono uppercase tracking-[0.2em] text-white/30 block mb-1.5">Password</label>
             <input
               type="password" value={form.password} onChange={set('password')} placeholder="••••••••"
               className="w-full bg-white/[0.02] border border-white/[0.07] rounded-xl px-4 py-3 text-[12px] text-white placeholder-white/20 outline-none focus:border-[#E5E5E5]/40 transition-all font-mono tracking-[0.2em]"
@@ -170,14 +170,14 @@ export default function AuthPage({ onBack }) {
           {error && (
             <div className="bg-[#E5E5E5]/[0.07] border border-[#E5E5E5]/20 px-4 py-3 rounded-xl flex items-center gap-3 animate-fade-in">
               <span className="text-[#E5E5E5] font-bold text-sm flex-shrink-0">!</span>
-              <p className="text-[10px] text-[#E5E5E5]/90 font-mono tracking-wide">{error}</p>
+              <p className="text-[11px] text-[#E5E5E5]/90 font-mono tracking-wide">{error}</p>
             </div>
           )}
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3.5 rounded-xl bg-[#E5E5E5] text-[#0B0B0B] font-bold text-[10px] uppercase font-mono tracking-[0.2em] hover:bg-[#BFBFBF] transition-all hover:shadow-[0_0_25px_rgba(229,229,229,0.35)] mt-1 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+            className="w-full py-3.5 rounded-xl bg-[#E5E5E5] text-[#0B0B0B] font-bold text-[11px] uppercase font-mono tracking-[0.2em] hover:bg-[#BFBFBF] transition-all hover:shadow-[0_0_25px_rgba(229,229,229,0.35)] mt-1 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
           >
             {loading && <div className="w-3 h-3 border-2 border-[#0B0B0B]/40 border-t-transparent rounded-full animate-spin" />}
             {loading ? 'Connecting…' : mode === 'login' ? 'Sign In' : 'Create Account'}
@@ -187,7 +187,7 @@ export default function AuthPage({ onBack }) {
         <div className="mt-6 pt-5 border-t border-white/[0.05] text-center relative z-10">
           <button
             onClick={() => { setMode(mode === 'login' ? 'register' : 'login'); setError('') }}
-            className="text-[9px] font-mono tracking-[0.1em] text-white/25 hover:text-white/60 transition-colors"
+            className="text-[11px] font-mono tracking-[0.1em] text-white/25 hover:text-white/60 transition-colors"
           >
             {mode === 'login' ? "Don't have an account? " : 'Already have an account? '}
             <span className="text-[#E5E5E5]">{mode === 'login' ? 'Register' : 'Sign in'}</span>

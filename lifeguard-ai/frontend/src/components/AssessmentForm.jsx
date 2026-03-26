@@ -329,7 +329,7 @@ function NumberInput({ question, value, onChange }) {
           onChange={(e) => onChange(parseFloat(e.target.value) || null)}
           className="w-36 bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.1)] rounded-xl px-4 py-3 text-sm text-text-primary placeholder-text-muted/40 outline-none focus:border-accent-500/50 transition-colors font-mono"
         />
-        <span className="text-[10px] font-mono uppercase tracking-widest text-text-muted">{question.unit}</span>
+        <span className="text-[11px] font-mono uppercase tracking-widest text-text-muted">{question.unit}</span>
       </div>
     </div>
   )
@@ -423,10 +423,10 @@ export default function AssessmentForm({ onComplete }) {
         {/* Header */}
         <div className="mb-8 animate-fade-in">
           <div className="flex items-center gap-2 mb-4">
-            <span className="text-[10px] font-mono text-accent-500 bg-accent-500/10 px-2 py-0.5 rounded border border-accent-500/20 tracking-widest uppercase">
+            <span className="text-[11px] font-mono text-accent-500 bg-accent-500/10 px-2 py-0.5 rounded border border-accent-500/20 tracking-widest uppercase">
               Step {stepIndex + 1} of {STEPS.length}
             </span>
-            <span className="text-[10px] font-mono uppercase tracking-widest text-text-muted/50">
+            <span className="text-[11px] font-mono uppercase tracking-widest text-text-muted/50">
               {step.id.toUpperCase()}
             </span>
           </div>
@@ -440,7 +440,7 @@ export default function AssessmentForm({ onComplete }) {
           </div>
 
           <h2 className="text-2xl font-light tracking-tight text-text-primary mb-1">{step.title}</h2>
-          <p className="text-[11px] text-text-muted font-mono uppercase tracking-[0.15em]">{step.subtitle}</p>
+          <p className="text-[12px] text-text-muted font-mono uppercase tracking-[0.15em]">{step.subtitle}</p>
         </div>
 
         {/* Questions */}
@@ -475,12 +475,12 @@ export default function AssessmentForm({ onComplete }) {
           {bmi && step.id === 'body' && (
             <div className="glass-card p-4 flex items-center gap-4 border-l-2 border-[rgba(255,255,255,0.2)] animate-fade-in">
               <div>
-                <p className="text-[9px] font-mono uppercase tracking-widest text-text-muted mb-1">BMI (Calculated)</p>
+                <p className="text-[11px] font-mono uppercase tracking-widest text-text-muted mb-1">BMI (Calculated)</p>
                 <p className="text-2xl font-light font-mono" style={{
                   color: bmi < 18.5 ? '#C8C8C8' : bmi < 23 ? '#F5F5F5' : bmi < 25 ? '#C8C8C8' : bmi < 30 ? '#A7A7A7' : '#E5E5E5'
                 }}>{bmi}</p>
               </div>
-              <p className="text-[11px] text-text-muted leading-relaxed">
+              <p className="text-[12px] text-text-muted leading-relaxed">
                 {bmi < 18.5 ? 'Underweight' : bmi < 23 ? 'Healthy (South Asian threshold)' : bmi < 25 ? 'Overweight risk begins at 23 for South Asians' : bmi < 30 ? 'Overweight' : 'Obese'}
               </p>
             </div>
@@ -490,7 +490,7 @@ export default function AssessmentForm({ onComplete }) {
         {/* Error */}
         {error && (
           <div className="mt-4 p-4 rounded-xl border border-accent-500/30 bg-accent-500/5 animate-fade-in">
-            <p className="text-[11px] text-accent-500 font-mono">{error}</p>
+            <p className="text-[12px] text-accent-500 font-mono">{error}</p>
           </div>
         )}
 
@@ -499,7 +499,7 @@ export default function AssessmentForm({ onComplete }) {
           <button
             onClick={back}
             disabled={stepIndex === 0}
-            className="text-[10px] font-mono uppercase tracking-widest text-text-muted hover:text-text-primary disabled:opacity-20 transition-colors flex items-center gap-2"
+            className="text-[11px] font-mono uppercase tracking-widest text-text-muted hover:text-text-primary disabled:opacity-20 transition-colors flex items-center gap-2"
           >
             ← Back
           </button>

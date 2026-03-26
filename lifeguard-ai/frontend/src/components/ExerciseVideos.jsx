@@ -62,7 +62,7 @@ function VideoCard({ video, color, isRecommended }) {
   return (
     <div className="glass-card overflow-hidden hover:border-[rgba(255,255,255,0.15)] transition-all group animate-fade-in relative">
       {isRecommended && (
-        <div className="absolute top-2 left-2 z-10 text-[8px] font-mono uppercase tracking-widest px-2 py-0.5 rounded" style={{ color, background: `${color}20`, border: `1px solid ${color}40` }}>
+        <div className="absolute top-2 left-2 z-10 text-[9px] font-mono uppercase tracking-widest px-2 py-0.5 rounded" style={{ color, background: `${color}20`, border: `1px solid ${color}40` }}>
           Recommended
         </div>
       )}
@@ -90,17 +90,17 @@ function VideoCard({ video, color, isRecommended }) {
                 </svg>
               </div>
             </button>
-            <div className="absolute bottom-2 right-2 px-2 py-0.5 rounded bg-black/80 text-[9px] font-mono text-white/70">{video.duration}</div>
+            <div className="absolute bottom-2 right-2 px-2 py-0.5 rounded bg-black/80 text-[11px] font-mono text-white/70">{video.duration}</div>
           </>
         )}
       </div>
 
       <div className="p-4">
-        <p className="text-[11px] text-text-primary leading-snug tracking-wide mb-2">{video.title}</p>
-        <p className="text-[10px] text-text-muted font-mono mb-3">{video.channel} · {video.level}</p>
+        <p className="text-[12px] text-text-primary leading-snug tracking-wide mb-2">{video.title}</p>
+        <p className="text-[11px] text-text-muted font-mono mb-3">{video.channel} · {video.level}</p>
         <div className="flex flex-wrap gap-1.5">
           {video.tags.map((t) => (
-            <span key={t} className="text-[9px] px-2 py-0.5 rounded font-mono tracking-widest uppercase" style={{ color, background: `${color}15`, border: `1px solid ${color}25` }}>
+            <span key={t} className="text-[11px] px-2 py-0.5 rounded font-mono tracking-widest uppercase" style={{ color, background: `${color}15`, border: `1px solid ${color}25` }}>
               {t}
             </span>
           ))}
@@ -135,13 +135,13 @@ export default function ExerciseVideos({ riskScores, userProfile }) {
         <div className="flex items-center justify-between relative z-10">
           <div>
             <p className="text-[12px] uppercase tracking-[0.2em] font-medium text-text-primary mb-1">Exercise Protocol</p>
-            <p className="text-[10px] text-text-muted tracking-widest uppercase font-mono">
+            <p className="text-[11px] text-text-muted tracking-widest uppercase font-mono">
               {riskScores ? 'Personalised for your risk profile' : 'Curated · Condition-Specific'}
             </p>
           </div>
           {maxIntensity < 3 && (
             <div className="px-3 py-1.5 rounded border border-accent-500/30 bg-accent-500/5">
-              <p className="text-[9px] font-mono text-accent-500 uppercase tracking-widest">High-intensity filtered</p>
+              <p className="text-[11px] font-mono text-accent-500 uppercase tracking-widest">High-intensity filtered</p>
             </div>
           )}
         </div>
@@ -157,7 +157,7 @@ export default function ExerciseVideos({ riskScores, userProfile }) {
             <button
               key={cond}
               onClick={() => setActiveCondition(cond)}
-              className="text-[9px] px-4 py-2.5 rounded font-mono uppercase tracking-widest transition-all relative overflow-hidden flex items-center gap-2"
+              className="text-[11px] px-4 py-2.5 rounded font-mono uppercase tracking-widest transition-all relative overflow-hidden flex items-center gap-2"
               style={isActive
                 ? { color: m.color, background: `${m.color}15`, border: `1px solid ${m.color}40` }
                 : { color: '#8E8E93', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)' }
@@ -167,7 +167,7 @@ export default function ExerciseVideos({ riskScores, userProfile }) {
               {idx === 0 && riskScores && <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: m.color }} />}
               {m.label}
               {score !== undefined && score !== null && (
-                <span className="text-[8px] opacity-60">{Math.round(score)}</span>
+                <span className="text-[9px] opacity-60">{Math.round(score)}</span>
               )}
             </button>
           )
@@ -177,7 +177,7 @@ export default function ExerciseVideos({ riskScores, userProfile }) {
       {/* Intensity warning */}
       {intensityWarning && (
         <div className="glass-card p-4 border-l-2 border-accent-500/50 bg-[rgba(229,229,229,0.02)] animate-fade-in">
-          <p className="text-[11px] text-text-muted leading-relaxed">
+          <p className="text-[12px] text-text-muted leading-relaxed">
             <strong className="text-text-primary">Note:</strong> High-intensity exercises are filtered based on your cardiovascular risk ({Math.round(riskScores?.cvd_risk || 0)}/100). Shown videos are safe for your risk level. Always warm up and consult your doctor before starting.
           </p>
         </div>
@@ -193,12 +193,12 @@ export default function ExerciseVideos({ riskScores, userProfile }) {
       ) : (
         <div className="glass-card p-8 text-center border-dashed">
           <p className="text-sm text-text-muted">No videos match your current intensity filter for this category.</p>
-          <p className="text-[10px] text-text-muted/50 font-mono mt-2">Try Yoga or Mental Health for gentler options.</p>
+          <p className="text-[11px] text-text-muted/50 font-mono mt-2">Try Yoga or Mental Health for gentler options.</p>
         </div>
       )}
 
       <div className="pt-4 text-center">
-        <p className="text-[9px] text-text-muted/60 font-mono uppercase tracking-widest">
+        <p className="text-[11px] text-text-muted/60 font-mono uppercase tracking-widest">
           CONSULT YOUR PHYSICIAN BEFORE STARTING A NEW EXERCISE REGIMEN.
         </p>
       </div>

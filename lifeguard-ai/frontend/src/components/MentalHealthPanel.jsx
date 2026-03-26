@@ -39,10 +39,10 @@ function ScoreBar({ label, score, max, colorStops }) {
       <div className="absolute top-0 left-0 w-64 h-64 bg-accent-500/5 blur-[80px] rounded-full pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity" />
       
       <div className="flex items-center justify-between relative z-10">
-        <span className="text-[11px] uppercase tracking-widest text-text-muted font-medium">{label}</span>
+        <span className="text-[12px] uppercase tracking-widest text-text-muted font-medium">{label}</span>
         <div className="flex items-center gap-3">
           {getSeverity() && (
-            <span className="text-[9px] px-2 py-0.5 rounded border font-mono tracking-widest uppercase"
+            <span className="text-[11px] px-2 py-0.5 rounded border font-mono tracking-widest uppercase"
               style={{ color: getColor(), borderColor: `${getColor()}40`, background: `${getColor()}10` }}>
               {getSeverity()}
             </span>
@@ -78,7 +78,7 @@ function StressIndicator({ level }) {
   return (
     <div className="glass-card p-4 flex items-center justify-between">
       <div>
-        <p className="text-[10px] uppercase tracking-widest font-medium text-text-muted mb-2">Cortisol / Stress</p>
+        <p className="text-[11px] uppercase tracking-widest font-medium text-text-muted mb-2">Cortisol / Stress</p>
         <div className="flex gap-1">
           {Array.from({ length: 10 }).map((_, i) => (
             <div
@@ -96,7 +96,7 @@ function StressIndicator({ level }) {
         <p className="text-sm font-light font-mono" style={{ color }}>
           {level !== null && level !== undefined ? `${level}/10` : '—'}
         </p>
-        <span className="text-[9px] text-text-muted uppercase tracking-widest mt-1">Somatic Load</span>
+        <span className="text-[11px] text-text-muted uppercase tracking-widest mt-1">Somatic Load</span>
       </div>
     </div>
   )
@@ -116,10 +116,10 @@ function SleepBadge({ quality }) {
       style={{ background: c.bg, borderColor: c.border }}
     >
       <div className="w-10 h-10 rounded flex items-center justify-center border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.02)]">
-        <span className="text-[10px] font-mono font-bold tracking-widest" style={{ color: c.color }}>{c.code}</span>
+        <span className="text-[11px] font-mono font-bold tracking-widest" style={{ color: c.color }}>{c.code}</span>
       </div>
       <div>
-        <p className="text-[10px] uppercase tracking-widest text-text-muted mb-1">REM / Deep Sleep Index</p>
+        <p className="text-[11px] uppercase tracking-widest text-text-muted mb-1">REM / Deep Sleep Index</p>
         <p className="text-xs font-semibold tracking-wide" style={{ color: c.color }}>{c.label}</p>
       </div>
     </div>
@@ -149,13 +149,13 @@ export default function MentalHealthPanel({ riskScores, amplifiers }) {
           </div>
         </div>
         <div className="relative z-10">
-          <p className="text-[11px] font-mono uppercase tracking-[0.2em] text-text-primary mb-1">Cognitive Base State</p>
-          <p className="text-[10px] text-text-muted uppercase tracking-widest">PHQ-9 // GAD-7 // Somatic Index</p>
+          <p className="text-[12px] font-mono uppercase tracking-[0.2em] text-text-primary mb-1">Cognitive Base State</p>
+          <p className="text-[11px] text-text-muted uppercase tracking-widest">PHQ-9 // GAD-7 // Somatic Index</p>
         </div>
         {mhi !== null && (
           <div className="ml-auto text-right relative z-10 flex flex-col items-end">
             <p className="text-3xl font-light font-mono text-text-primary tracking-tighter leading-none">{Math.round(mhi)}</p>
-            <p className="text-[9px] text-accent-500 font-mono tracking-widest mt-2">NEURAL INDEX</p>
+            <p className="text-[11px] text-accent-500 font-mono tracking-widest mt-2">NEURAL INDEX</p>
           </div>
         )}
       </div>
@@ -191,20 +191,20 @@ export default function MentalHealthPanel({ riskScores, amplifiers }) {
                !
             </div>
             <div>
-              <p className="text-[11px] font-mono uppercase tracking-widest text-accent-500 mb-2">Intervention Recommended</p>
+              <p className="text-[12px] font-mono uppercase tracking-widest text-accent-500 mb-2">Intervention Recommended</p>
               <p className="text-xs text-text-muted leading-relaxed mb-4 tracking-wide pr-4">
                 Analysis detects elevated psychosomatic markers. Connectivity with a certified clinician is advised to stabilize cognitive load.
               </p>
               <div className="space-y-2">
-                <div className="flex flex-col md:flex-row md:items-center gap-3 text-[10px] uppercase tracking-widest bg-[rgba(255,255,255,0.02)] border border-[rgba(255,255,255,0.05)] p-2 rounded">
+                <div className="flex flex-col md:flex-row md:items-center gap-3 text-[11px] uppercase tracking-widest bg-[rgba(255,255,255,0.02)] border border-[rgba(255,255,255,0.05)] p-2 rounded">
                   <div className="w-1.5 h-1.5 bg-accent-500 rounded-full glow-anim hidden md:block" />
                   <span className="text-text-muted"><strong className="text-text-primary font-medium">iCall (TISS):</strong> 9152987821</span>
-                  <span className="text-[9px] text-text-muted/50 md:border-l border-[rgba(255,255,255,0.1)] md:pl-3">Mon–Sat, 8am–10pm</span>
+                  <span className="text-[11px] text-text-muted/50 md:border-l border-[rgba(255,255,255,0.1)] md:pl-3">Mon–Sat, 8am–10pm</span>
                 </div>
-                <div className="flex flex-col md:flex-row md:items-center gap-3 text-[10px] uppercase tracking-widest bg-[rgba(255,255,255,0.02)] border border-[rgba(255,255,255,0.05)] p-2 rounded">
+                <div className="flex flex-col md:flex-row md:items-center gap-3 text-[11px] uppercase tracking-widest bg-[rgba(255,255,255,0.02)] border border-[rgba(255,255,255,0.05)] p-2 rounded">
                    <div className="w-1.5 h-1.5 bg-accent-500 rounded-full glow-anim hidden md:block" />
                   <span className="text-text-muted"><strong className="text-text-primary font-medium">Vandrevala:</strong> 1860-2662-345</span>
-                  <span className="text-[9px] text-text-muted/50 md:border-l border-[rgba(255,255,255,0.1)] md:pl-3">24/7 Free</span>
+                  <span className="text-[11px] text-text-muted/50 md:border-l border-[rgba(255,255,255,0.1)] md:pl-3">24/7 Free</span>
                 </div>
               </div>
             </div>
@@ -216,8 +216,8 @@ export default function MentalHealthPanel({ riskScores, amplifiers }) {
       {amplifiers && amplifiers.length > 0 && (
         <div className="space-y-3 pt-4 border-t border-[rgba(255,255,255,0.05)]">
           <div className="flex items-center gap-3 mb-2">
-             <span className="text-[10px] font-mono text-accent-500 bg-accent-500/10 px-2 py-0.5 rounded border border-accent-500/20">03</span>
-            <p className="text-[10px] font-medium text-text-muted uppercase tracking-[0.2em]">
+             <span className="text-[11px] font-mono text-accent-500 bg-accent-500/10 px-2 py-0.5 rounded border border-accent-500/20">03</span>
+            <p className="text-[11px] font-medium text-text-muted uppercase tracking-[0.2em]">
               Psychosomatic Feedback Loop
             </p>
           </div>
@@ -244,7 +244,7 @@ export default function MentalHealthPanel({ riskScores, amplifiers }) {
       )}
 
       <div className="pt-8 text-center border-t border-[rgba(255,255,255,0.03)] opacity-50">
-        <p className="text-[9px] text-text-muted font-mono uppercase tracking-widest leading-loose">
+        <p className="text-[11px] text-text-muted font-mono uppercase tracking-widest leading-loose">
            PHQ-9 & GAD-7 HEURISTIC SCREENING.<br/>
            NOT FOR DEFINITIVE DIAGNOSIS.
          </p>

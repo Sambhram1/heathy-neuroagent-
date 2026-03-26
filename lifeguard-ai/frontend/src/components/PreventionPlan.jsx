@@ -14,7 +14,7 @@ function PriorityItem({ text, index }) {
   return (
     <div className="glass-card p-4 flex items-start gap-4 animate-slide-up group hover:border-[rgba(255,255,255,0.15)] transition-all">
       <div className="flex-shrink-0 w-8 h-8 rounded border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.02)] flex items-center justify-center">
-        <span className="text-[9px] font-bold font-mono tracking-widest text-text-muted group-hover:text-accent-500 transition-colors">{String(index + 1).padStart(2, '0')}</span>
+        <span className="text-[11px] font-bold font-mono tracking-widest text-text-muted group-hover:text-accent-500 transition-colors">{String(index + 1).padStart(2, '0')}</span>
       </div>
       <p className="text-xs text-text-primary leading-relaxed tracking-wide mt-1">{text}</p>
     </div>
@@ -48,7 +48,7 @@ function RecommendationCard({ rec }) {
       <div className="flex items-center justify-between mt-2 pt-3 border-t border-[rgba(255,255,255,0.05)]">
         <button
           onClick={() => setExpanded(!expanded)}
-          className="text-[9px] uppercase tracking-widest text-text-muted hover:text-white transition-colors flex items-center gap-2 border px-2 py-1 rounded border-[rgba(255,255,255,0.1)]"
+          className="text-[11px] uppercase tracking-widest text-text-muted hover:text-white transition-colors flex items-center gap-2 border px-2 py-1 rounded border-[rgba(255,255,255,0.1)]"
         >
           {expanded ? '▲ COLLAPSE' : '▼ RATIONALE'}
         </button>
@@ -61,7 +61,7 @@ function RecommendationCard({ rec }) {
              {rec.why}
           </p>
           {rec.source && (
-            <div className="flex items-center gap-2 text-[9px] text-text-muted/60 font-mono uppercase tracking-widest">
+            <div className="flex items-center gap-2 text-[11px] text-text-muted/60 font-mono uppercase tracking-widest">
                <span className="w-1 h-1 bg-text-muted/50 rounded-full" />
                CIT: {rec.source}
             </div>
@@ -79,7 +79,7 @@ function EmptyPlanState() {
         <span className="w-4 h-4 rounded-full border-2 border-accent-500 animate-pulse" />
       </div>
       <p className="text-sm font-medium tracking-widest text-text-primary uppercase mb-2">Awaiting Parameters</p>
-      <p className="text-[10px] text-text-muted tracking-wide max-w-[200px] leading-relaxed mx-auto">
+      <p className="text-[11px] text-text-muted tracking-wide max-w-[200px] leading-relaxed mx-auto">
         Complete diagnostic sequence in the communication core to synthesize protocol.
       </p>
     </div>
@@ -185,9 +185,9 @@ export default function PreventionPlan({ planReady, evidence }) {
         <div className="flex items-center justify-between relative z-10">
           <div>
             <p className="text-[12px] uppercase tracking-[0.2em] font-medium text-text-primary mb-1">Targeted Modification Protocol</p>
-            <p className="text-[10px] text-text-muted tracking-widest uppercase font-mono">Synthesized · Optimized · Evidence-Based</p>
+            <p className="text-[11px] text-text-muted tracking-widest uppercase font-mono">Synthesized · Optimized · Evidence-Based</p>
           </div>
-          <button className="text-[9px] px-3 py-1.5 rounded border border-[rgba(255,255,255,0.1)] text-text-muted hover:text-white hover:border-[rgba(255,255,255,0.3)] hover:bg-[rgba(255,255,255,0.05)] transition-all font-mono tracking-widest uppercase flex items-center gap-2">
+          <button className="text-[11px] px-3 py-1.5 rounded border border-[rgba(255,255,255,0.1)] text-text-muted hover:text-white hover:border-[rgba(255,255,255,0.3)] hover:bg-[rgba(255,255,255,0.05)] transition-all font-mono tracking-widest uppercase flex items-center gap-2">
             Export <span className="opacity-50">.PDF</span>
           </button>
         </div>
@@ -199,7 +199,7 @@ export default function PreventionPlan({ planReady, evidence }) {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`text-[9px] px-4 py-3 rounded uppercase tracking-widest font-mono text-left transition-all relative overflow-hidden ${
+            className={`text-[11px] px-4 py-3 rounded uppercase tracking-widest font-mono text-left transition-all relative overflow-hidden ${
               activeTab === tab.id
                 ? 'bg-accent-500/10 border border-accent-500/30 text-accent-500'
                 : 'glass-card border-[rgba(255,255,255,0.05)] text-text-muted hover:text-white hover:border-[rgba(255,255,255,0.15)]'
@@ -224,7 +224,7 @@ export default function PreventionPlan({ planReady, evidence }) {
         <div className="pt-6 mt-6 border-t border-[rgba(255,255,255,0.05)]">
           <button
             onClick={() => setShowEvidence(!showEvidence)}
-            className="w-full flex items-center justify-between text-[10px] text-text-muted hover:text-white transition-colors"
+            className="w-full flex items-center justify-between text-[11px] text-text-muted hover:text-white transition-colors"
           >
             <span className="font-mono uppercase tracking-[0.2em] flex items-center gap-2">
               <span className="w-1.5 h-1.5 bg-[rgba(255,255,255,0.2)] rounded-full"></span>
@@ -243,7 +243,7 @@ export default function PreventionPlan({ planReady, evidence }) {
       )}
 
       <div className="pt-6 relative z-10 text-center">
-         <p className="text-[9px] text-text-muted/60 font-mono uppercase tracking-widest leading-loose">
+         <p className="text-[11px] text-text-muted/60 font-mono uppercase tracking-widest leading-loose">
            PROTOCOL FOR PREVENTIVE MODELING ONLY. <br/>
            SEEK CLINICAL GUIDANCE BEFORE MODIFICATION OF REGIMEN.
          </p>

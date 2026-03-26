@@ -119,8 +119,8 @@ export default function MentalHealthChat({ sessionId, userProfile, reportContext
       {/* Crisis banner */}
       {crisis && (
         <div className="flex-shrink-0 mx-4 mt-4 p-4 rounded-xl border border-accent-500/30 bg-[rgba(229,229,229,0.04)] animate-fade-in">
-          <p className="text-[10px] font-mono uppercase tracking-widest text-accent-500 mb-1">Crisis Support Available</p>
-          <p className="text-[11px] text-text-muted leading-relaxed">
+          <p className="text-[11px] font-mono uppercase tracking-widest text-accent-500 mb-1">Crisis Support Available</p>
+          <p className="text-[12px] text-text-muted leading-relaxed">
             <strong className="text-text-primary">iCall (TISS):</strong> 9152987821 · Mon–Sat 8am–10pm &nbsp;|&nbsp;
             <strong className="text-text-primary">Vandrevala:</strong> 1860-2662-345 · 24/7 Free
           </p>
@@ -130,7 +130,7 @@ export default function MentalHealthChat({ sessionId, userProfile, reportContext
       {/* Always-visible helpline bar */}
       <div className="flex-shrink-0 px-4 py-2 mt-2 flex items-center gap-3 border-b border-[rgba(255,255,255,0.04)]">
         <span className="w-1.5 h-1.5 rounded-full bg-[#9E9E9E] opacity-50" />
-        <p className="text-[9px] font-mono uppercase tracking-widest text-text-muted/50">
+        <p className="text-[11px] font-mono uppercase tracking-widest text-text-muted/50">
           iCall: 9152987821 &nbsp;·&nbsp; Vandrevala 24/7: 1860-2662-345
         </p>
       </div>
@@ -167,7 +167,7 @@ export default function MentalHealthChat({ sessionId, userProfile, reportContext
             </svg>
           </button>
         </div>
-        <p className="text-[9px] text-text-muted/40 font-mono uppercase tracking-widest text-center mt-2">
+        <p className="text-[11px] text-text-muted/40 font-mono uppercase tracking-widest text-center mt-2">
           Not a substitute for professional mental health care
         </p>
       </div>
