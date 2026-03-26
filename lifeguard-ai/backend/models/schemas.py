@@ -77,3 +77,18 @@ class ChatResponse(BaseModel):
     plan_ready: bool = False
     amplifiers: Optional[List[str]] = None
     evidence: Optional[List[dict]] = None
+
+
+class MentalChatMessage(BaseModel):
+    role: str
+    content: str
+
+
+class MentalChatRequest(BaseModel):
+    messages: List[MentalChatMessage]
+    session_id: str
+
+
+class MentalChatResponse(BaseModel):
+    message: str
+    crisis_detected: bool = False

@@ -8,8 +8,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 import uvicorn
 
-from models.schemas import ChatRequest, ChatResponse, RiskScores
+from models.schemas import ChatRequest, ChatResponse, RiskScores, MentalChatRequest, MentalChatResponse
 from agents.orchestrator import run_agent
+from agents.mental_chat import run_mental_chat
 from rag.knowledge_base import initialize_kb, get_document_count
 
 # In-memory session store: session_id -> {messages: [], risk_scores, amplifiers, evidence, plan_ready, plan}
@@ -101,6 +102,20 @@ async def chat(request: ChatRequest):
         plan_ready=result.get("plan_ready", False),
         amplifiers=result.get("amplifiers", []),
         evidence=result.get("evidence", []),
+    )
+
+
+@app.post("/api/mental-chat", response_model=MentalChatResponse)
+async def mental_chat(request: MentalChatRequest):
+    messages = [{"role": m.role, "content": m.content} for m in request.messages]
+    try:
+        result = await run_mental_chat(messages)
+    except Exception as e:
+        print(f"[Error] Mental chat failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Mental chat error: {str(e)}")
+    return MentalChatResponse(
+        message=result["message"],
+        crisis_detected=result.get("crisis_detected", False),
     )
 
 

@@ -20,6 +20,7 @@ export default {
         text: {
           primary: '#F5F5F5',
           secondary: '#8E8E93',
+          muted: '#8E8E93',
         },
         risk: {
           low: '#10b981', // keeping some standard colors for risk levels, but we can mute them
