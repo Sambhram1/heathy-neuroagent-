@@ -96,9 +96,10 @@ export default function MentalHealthChat({ sessionId, userProfile, reportContext
       setMessages((prev) => [...prev, { role: 'assistant', content: data.message }])
       if (data.crisis_detected) setCrisis(true)
     } catch (err) {
+      const detail = err?.message ? ` (${err.message})` : ''
       setMessages((prev) => [
         ...prev,
-        { role: 'assistant', content: 'Connection issue. Please try again in a moment.' },
+        { role: 'assistant', content: `Connection issue. Please try again in a moment${detail}.` },
       ])
     } finally {
       setLoading(false)

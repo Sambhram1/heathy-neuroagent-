@@ -112,9 +112,9 @@ const STEPS = [
         text: 'Do you smoke?',
         type: 'mcq',
         options: [
-          { label: 'Never smoked', value: false },
-          { label: 'Former smoker', value: false },
-          { label: 'Yes, currently smoking', value: true },
+          { label: 'Never smoked', value: 'never' },
+          { label: 'Former smoker', value: 'former' },
+          { label: 'Yes, currently smoking', value: 'current' },
         ],
       },
       {
@@ -353,7 +353,7 @@ function buildPayload(answers) {
     sleep_quality: answers.sleep_quality || 'fair',
     stress_level: answers.stress_level || 5,
     family_history: fh,
-    smoking: answers.smoking || false,
+    smoking: answers.smoking === 'current',
     alcohol: answers.alcohol || 'none',
     systolic_bp: answers.bp_range ?? null,
     fasting_glucose: answers.glucose_range ?? null,

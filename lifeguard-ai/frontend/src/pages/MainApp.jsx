@@ -24,10 +24,38 @@ const NAV = [
 // ─── Risk colour helper ────────────────────────────────────────────────────
 function riskColor(score) {
   if (score == null) return '#8E8E93'
-  if (score < 30) return '#F5F5F5'
-  if (score < 55) return '#C8C8C8'
-  if (score < 75) return '#A7A7A7'
-  return '#E5E5E5'
+  if (score < 35) return '#22c55e'
+  if (score < 65) return '#facc15'
+  return '#ef4444'
+}
+
+function scoreTheme(score) {
+  if (score == null) {
+    return {
+      accent: '#E5E5E5',
+      spotA: 'rgba(229,229,229,0.10)',
+      spotB: 'rgba(229,229,229,0.06)',
+    }
+  }
+  if (score < 35) {
+    return {
+      accent: '#22c55e',
+      spotA: 'rgba(34,197,94,0.17)',
+      spotB: 'rgba(34,197,94,0.10)',
+    }
+  }
+  if (score < 65) {
+    return {
+      accent: '#facc15',
+      spotA: 'rgba(250,204,21,0.17)',
+      spotB: 'rgba(250,204,21,0.10)',
+    }
+  }
+  return {
+    accent: '#ef4444',
+    spotA: 'rgba(239,68,68,0.18)',
+    spotB: 'rgba(239,68,68,0.11)',
+  }
 }
 
 export default function MainApp({ user }) {
@@ -133,6 +161,7 @@ export default function MainApp({ user }) {
   const isMental  = activeNav === 'mental'
 
   const overallRisk = riskScores?.overall_risk
+  const theme = scoreTheme(overallRisk)
 
   return (
     <div className="h-screen w-screen flex bg-[#0B0B0B] text-[#F5F5F5] overflow-hidden">
@@ -141,6 +170,13 @@ export default function MainApp({ user }) {
         backgroundImage: 'linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)',
         backgroundSize: '40px 40px',
       }} />
+      <div
+        className="fixed inset-0 pointer-events-none"
+        style={{
+          backgroundImage: `radial-gradient(circle at 20% 18%, ${theme.spotA} 0%, transparent 34%), radial-gradient(circle at 82% 76%, ${theme.spotB} 0%, transparent 36%)`,
+          transition: 'background-image 0.45s ease',
+        }}
+      />
 
       {/* Mobile overlay */}
       {sidebarOpen && (
@@ -152,12 +188,12 @@ export default function MainApp({ user }) {
 
         {/* Logo */}
         <div className="h-[52px] px-5 flex items-center gap-2.5 border-b border-white/[0.06] flex-shrink-0">
-          <div className="w-7 h-7 rounded-lg bg-[#E5E5E5]/10 border border-[#E5E5E5]/25 flex items-center justify-center flex-shrink-0">
-            <span className="w-2 h-2 rounded-full bg-[#E5E5E5]" style={{ boxShadow: '0 0 8px rgba(229,229,229,0.8)' }} />
+          <div className="w-7 h-7 rounded-lg bg-white/10 border border-white/25 flex items-center justify-center flex-shrink-0">
+            <span className="w-2 h-2 rounded-full" style={{ background: theme.accent, boxShadow: `0 0 8px ${theme.accent}` }} />
           </div>
           <div>
             <p className="text-[13px] font-medium tracking-tight text-white leading-none">
-              LifeGuard<span className="text-[#E5E5E5]">.AI</span>
+              LifeGuard<span style={{ color: theme.accent }}>.AI</span>
             </p>
             <p className="text-[8px] font-mono uppercase tracking-[0.2em] text-white/25 mt-0.5">Health Intelligence</p>
           </div>
@@ -174,14 +210,14 @@ export default function MainApp({ user }) {
                 onClick={() => { if (!locked) { setActiveNav(item.id); setSidebarOpen(false) } }}
                 className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all relative group ${
                   active
-                    ? 'bg-[rgba(229,229,229,0.07)] border border-[rgba(229,229,229,0.18)]'
+                    ? 'bg-white/[0.08] border border-white/[0.18]'
                     : locked
                     ? 'border border-transparent opacity-40 cursor-not-allowed'
                     : 'hover:bg-white/[0.03] border border-transparent'
                 }`}
               >
-                {active && <span className="absolute left-0 top-2 bottom-2 w-[2px] bg-[#E5E5E5] rounded-full" />}
-                <span className={`text-[8px] font-mono tracking-widest flex-shrink-0 w-5 ${active ? 'text-[#E5E5E5]' : 'text-white/30'}`}>
+                {active && <span className="absolute left-0 top-2 bottom-2 w-[2px] rounded-full" style={{ background: theme.accent }} />}
+                <span className={`text-[8px] font-mono tracking-widest flex-shrink-0 w-5 ${active ? '' : 'text-white/30'}`} style={active ? { color: theme.accent } : undefined}>
                   {item.num}
                 </span>
                 <div className="min-w-0 flex-1">
@@ -191,7 +227,7 @@ export default function MainApp({ user }) {
                   <p className="text-[8px] text-white/25 tracking-wide font-mono">{item.desc}</p>
                 </div>
                 {item.id === 'assessment' && planReady && (
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#E5E5E5] flex-shrink-0" style={{ boxShadow: '0 0 6px rgba(229,229,229,0.8)' }} />
+                  <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: theme.accent, boxShadow: `0 0 6px ${theme.accent}` }} />
                 )}
               </button>
             )
@@ -223,7 +259,7 @@ export default function MainApp({ user }) {
           )}
           <div className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-white/[0.02] border border-white/[0.05]">
             <div className="w-7 h-7 rounded-full bg-[#E5E5E5]/10 border border-[#E5E5E5]/20 flex items-center justify-center flex-shrink-0">
-              <span className="text-[10px] font-medium text-[#E5E5E5]">
+              <span className="text-[10px] font-medium" style={{ color: theme.accent }}>
                 {(user?.name || 'U')[0].toUpperCase()}
               </span>
             </div>
@@ -233,7 +269,8 @@ export default function MainApp({ user }) {
             </div>
             <button
               onClick={handleLogout}
-              className="text-[9px] font-mono text-white/20 hover:text-[#E5E5E5] transition-colors flex-shrink-0"
+              className="text-[9px] font-mono text-white/20 transition-colors flex-shrink-0"
+              style={{ '--hover-color': theme.accent }}
               title="Sign out"
             >↩</button>
           </div>
@@ -265,7 +302,7 @@ export default function MainApp({ user }) {
               </div>
             )}
             <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/[0.05] bg-white/[0.02]">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#E5E5E5]" style={{ boxShadow: '0 0 6px rgba(229,229,229,0.7)' }} />
+              <span className="w-1.5 h-1.5 rounded-full" style={{ background: theme.accent, boxShadow: `0 0 6px ${theme.accent}` }} />
               <span className="text-[8px] font-mono uppercase tracking-widest text-white/30">Active</span>
             </div>
           </div>
@@ -281,7 +318,7 @@ export default function MainApp({ user }) {
             {/* Chat */}
             <div className="w-full lg:w-[380px] xl:w-[440px] flex-shrink-0 flex flex-col border border-white/[0.06] rounded-2xl overflow-hidden bg-[rgba(255,255,255,0.01)]">
               <div className="flex-shrink-0 px-5 py-3 border-b border-white/[0.06] flex items-center gap-3">
-                <span className="text-[8px] font-mono text-[#E5E5E5]/70 bg-[#E5E5E5]/[0.06] px-2 py-0.5 rounded border border-[#E5E5E5]/15 tracking-widest">01</span>
+                <span className="text-[8px] font-mono px-2 py-0.5 rounded border tracking-widest" style={{ color: theme.accent, background: `${theme.accent}14`, borderColor: `${theme.accent}35` }}>01</span>
                 <span className="text-[9px] font-mono uppercase tracking-widest text-white/35">AI Diagnostic</span>
                 <div className="ml-auto flex gap-1">
                   <div className="typing-dot" /><div className="typing-dot" /><div className="typing-dot" />
