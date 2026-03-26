@@ -70,7 +70,11 @@ export default function MainApp({ user }) {
   const [reportContext, setReportContext] = useState(null)
   const [hasAssessment, setHasAssessment] = useState(null)
   const [chatHistory, setChatHistory] = useState([])
+  const [showReassessConfirm, setShowReassessConfirm] = useState(false)
+  const [undoReassessVisible, setUndoReassessVisible] = useState(false)
+  const [lastAssessmentSnapshot, setLastAssessmentSnapshot] = useState(null)
   const riskPanelRef = useRef(null)
+  const undoTimerRef = useRef(null)
 
   // Load Firestore user data
   useEffect(() => {
@@ -162,6 +166,57 @@ export default function MainApp({ user }) {
     setHasAssessment(false); setRiskScores(null)
     setAmplifiers([]); setUserProfile(null); setChatHistory([]); setActiveNav('assessment')
   }
+
+  const requestReassess = () => {
+    setShowReassessConfirm(true)
+  }
+
+  const confirmReassess = () => {
+    const snapshot = {
+      hasAssessment,
+      riskScores,
+      amplifiers,
+      userProfile,
+      chatHistory,
+      activeNav,
+      reportContext,
+      planReady,
+      evidence,
+    }
+    setLastAssessmentSnapshot(snapshot)
+
+    if (undoTimerRef.current) clearTimeout(undoTimerRef.current)
+    resetAssessment()
+    setShowReassessConfirm(false)
+    setUndoReassessVisible(true)
+
+    undoTimerRef.current = setTimeout(() => {
+      setUndoReassessVisible(false)
+      setLastAssessmentSnapshot(null)
+    }, 12000)
+  }
+
+  const undoReassess = () => {
+    if (!lastAssessmentSnapshot) return
+    setHasAssessment(lastAssessmentSnapshot.hasAssessment)
+    setRiskScores(lastAssessmentSnapshot.riskScores)
+    setAmplifiers(lastAssessmentSnapshot.amplifiers)
+    setUserProfile(lastAssessmentSnapshot.userProfile)
+    setChatHistory(lastAssessmentSnapshot.chatHistory)
+    setActiveNav(lastAssessmentSnapshot.activeNav)
+    setReportContext(lastAssessmentSnapshot.reportContext)
+    setPlanReady(lastAssessmentSnapshot.planReady)
+    setEvidence(lastAssessmentSnapshot.evidence)
+    setUndoReassessVisible(false)
+    setLastAssessmentSnapshot(null)
+    if (undoTimerRef.current) clearTimeout(undoTimerRef.current)
+  }
+
+  useEffect(() => {
+    return () => {
+      if (undoTimerRef.current) clearTimeout(undoTimerRef.current)
+    }
+  }, [])
 
   // Loading
   if (hasAssessment === null) {
@@ -263,7 +318,7 @@ export default function MainApp({ user }) {
 
           {hasAssessment && (
             <button
-              onClick={resetAssessment}
+              onClick={requestReassess}
               className="w-full flex items-center gap-3 px-3 py-2 mt-3 rounded-xl text-left border border-transparent hover:bg-white/[0.02] transition-all"
             >
               <span className="text-[11px] text-white/20 flex-shrink-0 w-5">↺</span>
@@ -307,6 +362,41 @@ export default function MainApp({ user }) {
 
       {/* ── MAIN ── */}
       <div className="flex-1 flex flex-col min-w-0 h-full relative overflow-hidden">
+
+        {undoReassessVisible && (
+          <div className="mx-5 mt-3 rounded-xl border border-[#facc15]/35 bg-[#facc15]/10 px-4 py-2.5 flex items-center justify-between gap-3">
+            <p className="text-[11px] font-mono uppercase tracking-widest text-[#fde68a]">Assessment reset. Undo your decision?</p>
+            <button
+              onClick={undoReassess}
+              className="rounded-md border border-[#fde68a]/45 px-3 py-1 text-[10px] font-mono uppercase tracking-widest text-[#fde68a] hover:bg-[#fde68a]/10"
+            >
+              Undo
+            </button>
+          </div>
+        )}
+
+        {showReassessConfirm && (
+          <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/70 p-4">
+            <div className="w-full max-w-md rounded-2xl border border-white/15 bg-[#0B0B0B] p-5 shadow-2xl">
+              <p className="text-sm font-medium text-white mb-2">Are you sure you want to re-assess your task?</p>
+              <p className="text-[11px] font-mono text-white/45 mb-4">This will clear your current assessment workspace. You can undo right after confirming.</p>
+              <div className="flex items-center justify-end gap-2">
+                <button
+                  onClick={() => setShowReassessConfirm(false)}
+                  className="rounded-md border border-white/20 bg-white/5 px-3 py-1.5 text-[10px] font-mono uppercase tracking-widest text-white/75 hover:bg-white/15"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmReassess}
+                  className="rounded-md border border-[#ef4444]/40 bg-[#ef4444]/15 px-3 py-1.5 text-[10px] font-mono uppercase tracking-widest text-[#fecaca] hover:bg-[#ef4444]/25"
+                >
+                  Confirm
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Header */}
         <header className="flex-shrink-0 h-[52px] flex items-center justify-between px-5 border-b border-white/[0.06] bg-[rgba(11,11,11,0.6)] backdrop-blur-md z-10">
